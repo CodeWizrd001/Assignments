@@ -1,0 +1,5 @@
+10
+insr 0 10
+insr 2 20
+extr
+stop

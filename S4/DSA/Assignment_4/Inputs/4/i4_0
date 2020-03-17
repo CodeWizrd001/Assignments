@@ -1,0 +1,13 @@
+10
+insr 0 10
+insr 2 20
+insr 5 30
+insr 1 40
+insr 3 50
+extr
+insr 0 60
+min
+decr 1 45
+extr
+min
+stop
