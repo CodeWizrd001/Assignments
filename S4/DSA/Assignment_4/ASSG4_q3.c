@@ -44,10 +44,10 @@ void Find(int x)
 
 int _Link(int x,int y,int i)
 {
-    if(i)
+    if(i==2)
     {
-        x = __Find(x,2);
-        y = __Find(y,2);
+        x = __Find(x,i);
+        y = __Find(y,i);
     }
     else
     {
@@ -60,8 +60,16 @@ int _Link(int x,int y,int i)
 
 int __Link(int x,int y,int i,int j)
 {
-    x = _Find(x,i);
-    y = _Find(y,i);
+    if(i==1)
+    {
+        x = _Find(x,i);
+        y = _Find(y,i);
+    }
+    else 
+    {
+        x = __Find(x,i) ;
+        y = __Find(y,i) ;
+    }
     if(x==y)
         return x;
     if (Rank[j][x] == Rank[j][y])
