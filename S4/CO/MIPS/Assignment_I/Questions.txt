@@ -1,0 +1,7 @@
+1. Write a program print Fibonacci numbers up to a range.
+2. write program to read 2 numbers and print all prime numbers between them.
+3. Write a program to a read number and check it is narcistic number or not
+4. Write a program to read 2 strings and compare them (strcmp)
+5. Write a program to read 2 strings and do substring matching and report the first occurrence index.
+
+Zip all the 5 .s programs and the screenshot file together, name it as your name and upload it to this link.
