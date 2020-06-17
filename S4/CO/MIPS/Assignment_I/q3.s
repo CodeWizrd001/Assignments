@@ -81,7 +81,6 @@ exit :
 
 .data
     prompt_a: .asciiz "Enter a : "
-    prompt_b: .asciiz "Enter b : "
     yes: .asciiz "YES\n"
     no: .asciiz "NO\n"
     spc: .asciiz " "
