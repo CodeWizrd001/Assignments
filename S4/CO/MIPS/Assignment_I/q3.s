@@ -9,10 +9,6 @@
 .text
 
 main :
-    li $t6, 0 
-    li $t7, 1
-    li $s7, 0
-
     # Print Prompt a
     li $v0, 4
     la $a0, prompt_a
@@ -25,28 +21,56 @@ main :
     move $s6, $v0
 
     li $t7 , 10
-    li $s0 , 0
 
-get_cube_sum :
-    beqz $s5 ,exit_loop
+    li $t6, 0               # Digit Count = 0
+
+get_digits :
+    beqz $s5 ,get_narc_sum
 
     div $s5,$t7
     mflo $s5
-    mfhi $t5
+    mfhi $t3
 
-    mult $t5, $t5
-    mflo $t2
+    addi $t6, $t6, 1        # Digit Count += 1
+    addi $sp, $sp, -4        # Push Digit 
+    sw $t3, 0($sp)
 
-    mult $t2, $t5
-    mflo $t2
+    j get_digits
+
+get_narc_sum :
+    move $t5, $t6
+    li $s0, 0
+narcLoop :
+    beqz $t5, exit_sum
+    addi $t5, -1
+    move $t4, $t6
+
+    lw $t3, 0($sp)
+    addi $sp, $sp, 4
     
-    add	$s0, $s0, $t2		# $s0 = s0 +t2
+    move $a0, $t3
+    move $a1, $t6 
+    jal power
     
-    j get_cube_sum
+    add $s0, $s0, $v1
+    
+    j narcLoop
 
-exit_loop :
+exit_sum :
     beq $s6,$s0,pyes
     j pno
+
+power : 
+    li $v1, 1
+    move $t4, $a1
+powLoop :
+    beqz $t4, retPower
+    addi $t4, -1
+    mult $v1, $a0
+    mflo $v1
+    j powLoop
+retPower :
+    jr $ra
 
 pyes :
     li $v0, 4
