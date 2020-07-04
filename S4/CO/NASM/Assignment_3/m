@@ -1,0 +1,7 @@
+import os
+import sys
+
+
+if __name__ == '__main__' :
+	os.system('nasm -f elf {0}.asm'.format(sys.argv[1]))
+	os.system('ld -melf_i386 {0}.o -o {0}.aos'.format(sys.argv[1]))
