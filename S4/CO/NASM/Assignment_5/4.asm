@@ -1,17 +1,12 @@
 section .data
 	nl : db 10
-	pa : db "Enter Celsius : "
+	pa : db "Enter A Number : "
 	la : equ $-pa 
-	five : dw 5
-	nine : dw 9 
-	zero : dq 0 
-	thirytwo : dw 32
 	format_in : db "%lf",0
-	format_out : db "Fahrenheit : %lf",10,0
+	format_out : db "Product : %lf",10,0
 
 section .bss 
-	c : resq 1
-	f : resq 1 
+	a : resq 1
 	t_float : resq 1 
 
 section .text 
@@ -26,14 +21,16 @@ main :
 	int 80h
 
 	call _scan_float
-	fst qword[c]
+	fst qword[a]
 
-	ffree ST0
-	fld qword[zero]
-	fiadd word[nine]
-	fidiv word[five]
-	fmul qword[c]
-	fiadd word[thirytwo]
+	mov eax , 4
+	mov ebx , 1 
+	mov ecx , pa
+	mov edx , la 
+	int 80h
+
+	call _scan_float
+	fmul qword[a] 
 
 	mov eax , format_out
 	call _print_float
