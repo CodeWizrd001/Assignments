@@ -80,11 +80,13 @@ main :
 	ffree ST0				; sqrt(b^2-4ac)
 	fld qword[b]
 	fmul qword[b]
+found_b2:
 	fsub qword[ac4]
 	fst qword[det]
-	fld qword[zero]
+	fldz
+found_det:
 	fcomi ST1				; if b^2-4ac < 0 	print_imaginary
-	jg print_imaginary
+	ja print_imaginary
 	call clearStack
 	fld qword[det]
 	fsqrt 
