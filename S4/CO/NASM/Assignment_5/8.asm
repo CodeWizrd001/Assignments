@@ -4,19 +4,14 @@ section .data
 	lx : equ $-px 
 	pn : db "Enter Number Of Terms To Use For Estimation : "
 	ln : equ $-pn 
-	two : dw 2
 	format_in : db "%lf",0
-	format_out : db "Cos Estimation : %lf",10,0
-	format_out_ : db "Cos Calculated : %lf",10,0
-	format_diff : db "Difference : %lf",10,0
+	format_out : db "Taylor Series Estimation : %lf",10
 
 section .bss 
 	n : resw 1 
-	b : resq 1 
 	f : resw 1
 	t : resw 1
 	i : resw 1 
-	c : resq 1 
 	y : resw 1
 	x : resq 1
 	a : resq 1
@@ -50,57 +45,36 @@ main :
 	call _read_int
 	mov word[n] , ax
 
-	call cos
+	call taylor
 	call clearStack
 
 	fld qword[ans]
 	mov eax , format_out
 	call _print_float
-	call clearStack
-
-	fld qword[x]
-	fcos
-	mov eax , format_out_
-	call _print_float
-before:
-	fsub qword[ans] 
-	mov eax , format_diff
-	call _print_float
 
 exit_:
 	jmp exit
 
-cos :
+taylor :
 	pusha 
 	fldz 
-	movzx ecx , word[n]
 	fst qword[ans]
-	dec ecx 
-	mov dword[f] , 1
-c_loop :
-	cmp ecx , 0
-	jl retCos
-	mov edx , ecx
-	add dx , cx
-	mov dword[y] , edx 
+	dec word[n]
+t_loop :
+	cmp word[n] , 0
+	jl retTayl
+	movzx edx , word[n]
+	mov word[y] , dx 
 	fld qword[x]
 	call _pow_float
 	mov word[f] , dx 
 	call factorial
 	fidiv dword[fact]
-	mov eax , ecx 
-	mov ebx , 2
-	mov edx , 0
-	div bx 
-	cmp dx , 0
-	je continue 
-	fchs
-continue:
 	fadd qword[ans]
 	fstp qword[ans]
-	dec ecx 
-	jmp c_loop
-retCos :
+	dec word[n]
+	jmp t_loop
+retTayl :
 	popa 
 	ret
 
@@ -112,13 +86,11 @@ pf_loop :
 	jle retPowf
 	fmul qword[x]
 	dec bx 
-after_mul:
 	jmp pf_loop
 retPowf :
 	ret 
 
 power :
-	pusha 
 	mov eax , 1
 	movzx ebx , word[y]
 	movzx ecx , word[f]
@@ -130,11 +102,9 @@ p_loop :
 	jmp p_loop
 retPow :
 	mov dword[pow] , eax
-	popa
 	ret
 
 factorial :
-	pusha 
 	mov eax , 1
 	movzx ebx , word[f]
 f_loop :
@@ -145,7 +115,6 @@ f_loop :
 	jmp f_loop
 retFact :
 	mov dword[fact] , eax
-	popa
 	ret
 
 _scan_float :
