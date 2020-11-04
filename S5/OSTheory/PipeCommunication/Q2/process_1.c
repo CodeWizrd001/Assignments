@@ -10,6 +10,7 @@ int check(char *pwd)
     if(strlen(pwd)==10)
         return 0 ;
     printf("Enter Password Of Length 10\n") ;
+    return 1 ;
 }
 
 int main() 
