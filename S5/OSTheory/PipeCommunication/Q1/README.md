@@ -1,6 +1,7 @@
 # IPC Using Unnamed Pipe
 
 Interprocess communication between related processes
+
 The pipe command is used to make pipes and is used for inter process communication using read and write commands
 
 ## Files : 
@@ -24,6 +25,7 @@ Process 3             # Assigns Categories based on Average and Standard Deviati
 # IPC Using Named Pipe
 
 Interprocess communication between unrelated processes
+
 The mkfifo command is used to make pipes and their file descriptors are used for inter process communication using read and write commands
 
 ## Files : 
