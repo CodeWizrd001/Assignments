@@ -115,7 +115,7 @@ void main()
 
     int nProc , nRes , i , j , flag;
 
-    f = fopen("input","r") ;
+    f = stdin ;
     printf("Enter Number of Processes : ") ;
     fscanf(f,"%d",&nProc) ;
     printf("\nEnter Number of Resources : ") ;

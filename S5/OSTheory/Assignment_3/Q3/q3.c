@@ -33,7 +33,7 @@ void test(int phnum)
         sleep(2); 
         printf("Philosopher %d takes fork %d and %d\n", 
                       phnum + 1, left(phnum) + 1, phnum + 1); 
-        printf("Philosopher %d is Eating\n", phnum + 1); 
+        printf("Philosopher %d - Eating\n", phnum + 1); 
         sem_post(&S[phnum]); 
     } 
 } 
@@ -42,7 +42,7 @@ void take_fork(int phnum)
 { 
     sem_wait(&mutex); 
     state[phnum] = HUNGRY; 
-    printf("Philosopher %d is Hungry\n", phnum + 1); 
+    printf("Philosopher %d - Hungry\n", phnum + 1); 
     test(phnum); 
     sem_post(&mutex); 
     sem_wait(&S[phnum]); 
@@ -53,8 +53,8 @@ void put_fork(int phnum)
 {
     sem_wait(&mutex); 
     state[phnum] = THINKING; 
-    printf("Philosopher %d putting fork %d and %d down\n",phnum + 1, left(phnum) + 1, phnum + 1); 
-    printf("Philosopher %d is thinking\n", phnum + 1); 
+    printf("Philosopher %d fork %d and %d down\n",phnum + 1, left(phnum) + 1, phnum + 1); 
+    printf("Philosopher %d - thinking\n", phnum + 1); 
     test(left(phnum)); 
     test(right(phnum)); 
     sem_post(&mutex); 
@@ -83,7 +83,7 @@ int main()
     { 
 
         pthread_create(&thread_id[i], NULL,philospher,&phil[i]); 
-        printf("Philosopher %d is thinking\n", i + 1); 
+        printf("Philosopher %d - thinking\n", i + 1); 
     }
     for (i = 0; i < n; i++) 
         pthread_join(thread_id[i], NULL); 
