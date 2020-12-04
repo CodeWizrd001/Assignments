@@ -2,7 +2,7 @@
 
 Interprocess communication between unrelated processes
 
-The ftok , msgget , msgget and msgrevc commands are used to create and use the message queeus
+The ftok , msgget , msgget and msgrevc commands are used to create and use the message queues
 
 ## Files : 
 ```
