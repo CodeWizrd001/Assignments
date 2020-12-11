@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>form</title>
+    </head>
+    <body>
+        <form action="" method="POST" name="feedback">
+            <h3>Feedback</h3>
+            <p>
+                You are welcome to provide feedback on this website. Please consider
+                reading <a href="#">About the Site</a> before filling this form.
+            </p>
+            
+            <label for="nm"><b>Name</b></label> <br>
+            <input type="text" name="nm" size="70"> <br><br>
+
+            <label for="mail"><b>Email <span style="color:red;">&ast;</span></b></label> <br>
+            <input type="email" name="mail" size="70" required> <br>
+            Your email id is required. It will not be shown to anybody else.<br><br>
+
+            <label for="cat"><b>Choose a type <span style="color:red;">&ast;</span></b></label><br>
+            <select name="cat" required>
+                <option value="gen">General Feedback</option>
+                <option value="acd">Academics</option>
+                <option value="mess">Mess Related</option>
+            </select><br>
+            Please choose a category for your feedback.<br><br>
+
+            <label for="msg"><b>Message <span style="color:red;">&ast;</span></b></label><br>
+            <textarea name="msg" cols="100" rows="7" required></textarea><br>
+            Write the feedback message here.<br><br>
+
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>

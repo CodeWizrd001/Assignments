@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Operaions</title>
+        <script type="text/javascript" src="function.js"></script>
+    </head>
+    <body>
+        <form action="" name="form1" id="form01">
+            <label for="op1">Operand 1</label>
+            <input type="text" id="op1text" name="op1"><br>
+            <br>
+            <label for="op2">Operand 2</label>
+            <input type="text" id= "op2text" name="op2"><br>
+            <br>
+            <input type="radio" name="op" value="+"> Add<br>
+            <input type="radio" name="op" value="-"> Substract<br>
+            <input type="radio" name="op" value="x"> Multiply<br>
+            <input type="button" id="calc_btn" value="Calculate">
+        </form>
+        
+        <p style="font-size: 10px;">Note: float results are rounded to 2 decimal places</p>
+        
+        <p id="result">
+
+        </p>
+        
+        <noscript><p style="font-size: small; color: red;">Enable JavaScript</p></noscript>
+    </body>
+</html>
