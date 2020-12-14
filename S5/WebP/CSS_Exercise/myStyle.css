@@ -1,0 +1,19 @@
+body {
+    font-family: Verdana;
+    font-size: medium;
+    background-color: yellow;
+    margin: 0px;
+}
+h2 {
+    font-family: Georgia;
+    color: green;
+}
+p {
+    border: 2px solid gray;
+}
+p.personal {
+    font-style: italic;
+}
+ul {
+    background-color: blue;
+}
