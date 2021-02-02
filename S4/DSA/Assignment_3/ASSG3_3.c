@@ -7,7 +7,7 @@ typedef struct node
 	char word[100];
 	struct node *next;
 } Node;
-
+ 
 void insert(Node **head,char s[])
 {
 	    Node *temp,*new_node;

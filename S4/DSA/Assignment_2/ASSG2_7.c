@@ -8,7 +8,7 @@ typedef struct node
 {
 	int key;
 	struct node *left;
-	struct node *right;
+	struct node *right; 
 }Node;
 
 Node *getNode(int key);

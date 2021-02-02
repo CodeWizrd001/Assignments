@@ -6,7 +6,7 @@ struct Node
 	struct Node *l;
 	struct Node *r;
 	int lvl;
-	int path;
+	int path; 
 };
 
 typedef struct Node node ;

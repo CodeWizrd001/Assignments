@@ -9,7 +9,7 @@ struct hashNODE
 
 	int deleted;
 
-	int occupied;
+	int occupied; 
 
 	struct hashNODE* link;
 };

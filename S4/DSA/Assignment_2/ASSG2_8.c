@@ -8,7 +8,7 @@ typedef struct node
 {
 	char key;
 	int freq;
-	struct node *left;
+	struct node *left; 
 	struct node *right;
 	struct node *next;
 }node;

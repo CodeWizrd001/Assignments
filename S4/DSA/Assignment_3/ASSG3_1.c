@@ -7,7 +7,7 @@ typedef struct node
 	int data;
 	struct node *left,*right;
 	int ht;				
-}node;
+}node; 
  
 node *insert(node *,int);
 node *deleteNode(node *,int);

@@ -8,7 +8,7 @@ int hashcode(char x)
 }
 
 int checker(char*a,int *T,int *N,int x) 
-{
+{ 
 	int hs ;
 	for(int i=0;i<x;i+=1)
 	{
