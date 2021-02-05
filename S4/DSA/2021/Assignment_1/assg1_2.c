@@ -4,6 +4,7 @@
 typedef struct Node {
     struct Node *left ;
     struct Node *right ;
+    int level ;
     int key ;
 } Node ;
 
@@ -45,65 +46,94 @@ Node *Create()
 	int n ;
 	char c ;
 	c = getchar() ;
-
-    // printf("O[%d %c] ",i,ch[0]) ;
  	if(scanf("%d",&n))
 	{
-		// scanf("%c",&c) ;
-        // printf("{%d} ",n) ;
 		Node *t  = (Node*) calloc(1,sizeof(Node)) ;
-		t->key = n ;
 
-        // printf("\nLeft") ;
+		t->key = n ;
 		t->left = Create() ;
-        // printf("\nRight") ;
 		t->right = Create() ;
+
 		temp = t;
 	}
 	c = getchar() ;
-    // printf("C[%d %c] ",i,ch[0]) ;
 	return temp ;
+}
+
+Node *Parent(Node *node,Node *Tree) 
+{
+    if(Tree == node || Tree == NULL)
+        return NULL ;
+    if(Tree->left == node || Tree->right == node) 
+        return Tree ;
+
+    Node *res = Parent(node,Tree->left) ;
+
+    if(res!=NULL) 
+        return res ;
+    else 
+        return Parent(node,Tree->right) ;
+}
+
+void Levels(Node *Tree,int level) 
+{ 
+    if(Tree == NULL) 
+        return ;
+    
+    Tree->level = level ;
+
+    Levels(Tree->left,level+1) ;
+    Levels(Tree->right,level+1) ;
+}
+
+int cousinExist()
+{
+    return 0 ;
+}
+
+int cousinPrint(Node *Tree,Node *parent,int level) 
+{
+    if(Tree == NULL || Tree == 0 || Tree == parent)
+        return 0 ;
+    
+    Node *l = Tree->left ;
+    Node *r = Tree->right ;
+
+    if(Tree->level == level)
+    {
+        printf("%d ",Tree->key) ;
+        return 1 ;
+    }
+
+    int x = cousinPrint(l,parent,level) ; 
+    int y = cousinPrint(r,parent,level) ; 
+
+    return x || y ;
 }
 
 void main() 
 {
-    char op ;
     int x ;
-    int i = 0 ;
+
     Node *Tree = NULL ;
     Tree = Create() ;
-    parenPrint(Tree) ;
-    printf("\n") ;
-    /*
-    do 
+    // printf("Check -2\n") ;
+    Levels(Tree,0) ;
+    // printf("Check -1\n") ;
+
+    scanf("%d",&x) ;
+    // printf("Check 0") ;
+    Node *n = Search(Tree,x) ;
+    // printf("Check 1") ;
+    Node *parent = Parent(n,Tree) ;
+    // printf("Check 2") ;
+    if(n->level == 0 || n->level == 1) 
+        printf("-1\n") ;
+    else 
     {
-        scanf(" %c",&op) ;
-        // printf("Scanned %c\n",op) ;
-        switch(op) 
-        {
-            case 'i' :  if(i==0) 
-                            Tree = calloc(1,sizeof(Node)) ;
-                        else 
-                            Tree = realloc(Tree,(i+1) * sizeof(Node)) ;
-                        scanf("%d",&(Tree[i].key)) ;
-                        // printf("Scanned [%#x] %d\n",Tree + i,Tree[i].key) ;
-                        Tree[i].left = NULL ;
-                        Tree[i].right = NULL ;
-                        if(i>0)
-                        {
-                            if(i%2)
-                                Tree[(i-1)/2].left = Tree + i ;
-                            else 
-                                Tree[(i-2)/2].right = Tree + i ;
-                        }
-                        i += 1 ;
-                        break ;
-            case 'p' :  parenPrint(Tree) ;
-                        printf("\n");
-                        break ;
-            case 'e' :  break ;
-            default  :  break ; 
-        }
-    } while(op != 'e') ;
-    */
+        if(!cousinPrint(Tree,parent,n->level))
+            printf("-1\n") ;
+        else 
+            printf("\n") ;
+    }
 }
