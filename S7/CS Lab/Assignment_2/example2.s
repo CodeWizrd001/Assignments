@@ -10,23 +10,26 @@ function:
 	.cfi_offset 5, -8
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$20, %esp
-	.cfi_offset 3, -12
-	call	__x86.get_pc_thunk.ax
-	addl	$_GLOBAL_OFFSET_TABLE_, %eax
+	subl	$56, %esp
+	movl	8(%ebp), %eax
+	movl	%eax, -44(%ebp)
+	movl	%gs:20, %eax
+	movl	%eax, -12(%ebp)
+	xorl	%eax, %eax
 	subl	$8, %esp
-	pushl	8(%ebp)
-	leal	-24(%ebp), %edx
-	pushl	%edx
-	movl	%eax, %ebx
-	call	strcpy@PLT
+	pushl	-44(%ebp)
+	leal	-28(%ebp), %eax
+	pushl	%eax
+	call	strcpy
 	addl	$16, %esp
 	nop
-	movl	-4(%ebp), %ebx
+	movl	-12(%ebp), %eax
+	xorl	%gs:20, %eax
+	je	.L2
+	call	__stack_chk_fail
+.L2:
 	leave
 	.cfi_restore 5
-	.cfi_restore 3
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
@@ -47,25 +50,31 @@ main:
 	pushl	%ecx
 	.cfi_escape 0xf,0x3,0x75,0x7c,0x6
 	subl	$276, %esp
-	call	__x86.get_pc_thunk.ax
-	addl	$_GLOBAL_OFFSET_TABLE_, %eax
-	movl	$0, -12(%ebp)
-	jmp	.L3
-.L4:
+	movl	%gs:20, %eax
+	movl	%eax, -12(%ebp)
+	xorl	%eax, %eax
+	movl	$0, -272(%ebp)
+	jmp	.L4
+.L5:
 	leal	-268(%ebp), %edx
-	movl	-12(%ebp), %eax
+	movl	-272(%ebp), %eax
 	addl	%edx, %eax
 	movb	$65, (%eax)
-	addl	$1, -12(%ebp)
-.L3:
-	cmpl	$254, -12(%ebp)
-	jle	.L4
+	addl	$1, -272(%ebp)
+.L4:
+	cmpl	$254, -272(%ebp)
+	jle	.L5
 	subl	$12, %esp
 	leal	-268(%ebp), %eax
 	pushl	%eax
 	call	function
 	addl	$16, %esp
 	nop
+	movl	-12(%ebp), %eax
+	xorl	%gs:20, %eax
+	je	.L6
+	call	__stack_chk_fail
+.L6:
 	movl	-4(%ebp), %ecx
 	.cfi_def_cfa 1, 0
 	leave
@@ -76,16 +85,5 @@ main:
 	.cfi_endproc
 .LFE1:
 	.size	main, .-main
-	.section	.text.__x86.get_pc_thunk.ax,"axG",@progbits,__x86.get_pc_thunk.ax,comdat
-	.globl	__x86.get_pc_thunk.ax
-	.hidden	__x86.get_pc_thunk.ax
-	.type	__x86.get_pc_thunk.ax, @function
-__x86.get_pc_thunk.ax:
-.LFB2:
-	.cfi_startproc
-	movl	(%esp), %eax
-	ret
-	.cfi_endproc
-.LFE2:
-	.ident	"GCC: (Debian 10.2.1-6) 10.2.1 20210110"
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.11) 5.4.0 20160609"
 	.section	.note.GNU-stack,"",@progbits

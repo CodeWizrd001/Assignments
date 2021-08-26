@@ -6,7 +6,7 @@ void function(int a, int b, int c) {
    int *ret;
 
    ret = buffer1 + 26;
-   (*ret) += 10;
+   (*ret) += 12;
 }
 
 void main() {
