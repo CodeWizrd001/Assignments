@@ -20,4 +20,4 @@
 
 > ## [Semester 7](S7)
 >
-> [Web Programming New](S5/WebP-New)
+> [Web Programming New](S7/WebP-New)
