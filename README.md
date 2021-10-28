@@ -1,16 +1,23 @@
 ### All Assignments of Computer Science Dept
 
-> ## [Semester 4](Semester-4)
+> ## [Semester 4](S4)
 >
-> [Computer Organisation](Semester-4/Computer-Organisation)
+> [Computer Organisation](S4/CO)
 >
-> [Data Structures and Algorithms](master/Semester-4/DSA)
+> [Data Structures and Algorithms](S4/DSA)
 
+> ## [Semester 5](S5)
+>
+> [NTC](S5/NTC)
+>
+> [Operating System Theory](S5/OSTheory)
+>
+> [Web Programming](S5/WebP)
 
-> ## [Semester 5](Semester-5)
+> ## [Semester 6](S6)
 >
-> [Image Processing Lab](Semester-5/IP-Lab)
+> [Image Processing](S6/IP-Lab)
+
+> ## [Semester 7](S7)
 >
-> [Operating System Theory](Semester-5/OSTheory)
->
-> [Web Programming](Semester-5/WebP)
+> [Web Programming New](S7/WebP-New)

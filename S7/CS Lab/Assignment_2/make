@@ -1,0 +1,4 @@
+import os
+import sys
+
+os.system(f"gcc -m32 {sys.argv[0]}.c -o {sys.argv[0]}")
