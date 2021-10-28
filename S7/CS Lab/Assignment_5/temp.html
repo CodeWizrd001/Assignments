@@ -1,0 +1,39 @@
+<div class="form-container">
+    <form method="post" action="$PORTAL_ACTION$">
+        <p class="title">Click To Continue</p>
+        <p>
+            <input type="checkbox" required> I agree to the terms and conditions
+        </p>
+        <input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+        <input name="zone" type="hidden" value="$PORTAL_ZONE$">
+        <input name="accept" type="submit" value="Continue">
+    </form>
+</div>
+
+<style>
+    body {
+        background-color: #444444;
+    }
+    
+    .title {
+        font-size: 1.5em;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #f1f1f1;
+        padding: 25px;
+        border-radius: 10px;
+    }
+</style>

@@ -1,0 +1,8 @@
+Low 
+    IDs are generated +1 from starting from 1
+
+Medium
+    ID generated from Unix Epoch Time
+
+High
+    MD5 of incremented values starting from 1 (reached 15 now)

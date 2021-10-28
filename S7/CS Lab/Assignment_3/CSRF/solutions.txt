@@ -1,0 +1,7 @@
+Medium 
+    Make guestbook entry with change password url embedded
+        - requires to modify input field to have more than 50 characters
+
+High
+    Upload file with upload vulnerability 
+    Run from there

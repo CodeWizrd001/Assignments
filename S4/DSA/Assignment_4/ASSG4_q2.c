@@ -148,26 +148,26 @@ int paren(Node *tree)
 	return 0 ;
 }
 
-Node *Create()
-{
-	char ch[3] ;
-	int n ;
-	char c ;
-	fscanf(Fin,"%s",ch); 
-	if(fscanf(Fin,"%d",&n))
+	Node *Create()
 	{
-		fscanf(Fin," %c",&c) ;
-		Node *temp  = (Node*) calloc(1,sizeof(Node)) ;
-		temp->val = n ;
-		temp->color = c ;
-		temp->lC = Create() ;
-		temp->rC = Create() ;
+		char ch[3] ;
+		int n ;
+		char c ;
+		fscanf(Fin,"%s",ch); 
+		if(fscanf(Fin,"%d",&n))
+		{
+			fscanf(Fin," %c",&c) ;
+			Node *temp  = (Node*) calloc(1,sizeof(Node)) ;
+			temp->val = n ;
+			temp->color = c ;
+			temp->lC = Create() ;
+			temp->rC = Create() ;
+			fscanf(Fin,"%s",ch) ;
+			return temp ;
+		}
 		fscanf(Fin,"%s",ch) ;
-		return temp ;
+		return NULL ;
 	}
-	fscanf(Fin,"%s",ch) ;
-	return NULL ;
-}
 
 int getBalance(Node *x)
 {

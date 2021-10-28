@@ -1,0 +1,8 @@
+Low 
+    Send Post request with password
+
+Medium
+    Send Post request with password and captcha passed flag as true
+
+High
+    Send Post request with user-agent : reCAPTCHA and g-recaptcha-response : hidd3n_valu3

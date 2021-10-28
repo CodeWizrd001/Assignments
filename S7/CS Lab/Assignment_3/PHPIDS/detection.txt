@@ -1,0 +1,53 @@
+BruteForce 
+    Low : No
+    Medium : No
+    High : No
+
+Command Injection
+    Low : No
+    Medium : Yes 
+    High : No
+
+CSRF 
+    Low : No 
+    Medium : Yes 
+
+File Inclusion
+    Low : Yes 
+    Medium : Yes 
+    High : Yes 
+
+File Upload
+    Low : No 
+    Medium : No
+    High : No
+
+Insecure Captcha 
+    Low : No  
+    Medium : No 
+    High : No
+
+SQL Injection 
+    Low : Yes 
+    Medium : No 
+    High : Yes
+
+SQL Injection Blind
+    Low : 
+    Medium :
+    High :
+
+XSS DOM 
+    Low : Yes
+    Medium : No     
+    High : No , Because data is not getting sent to server side
+
+XSS Reflected
+    Low : Yes 
+    Medium : Yes 
+    High : Yes 
+
+XSS Stored 
+    Low : Yes 
+    Medium : Yes 
+    High : Yes 

