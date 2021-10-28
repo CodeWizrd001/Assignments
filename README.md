@@ -20,4 +20,8 @@
 
 > ## [Semester 7](S7)
 >
-> [Web Programming New](S7/WebP-New)
+> [Web Programming](S7/WebP)
+>
+> [Computer Security](S7/CS%20Lab)
+>
+> [Artifical Intelligence](S7/AI)
