@@ -38,8 +38,37 @@ players = {
 
 moves = {
     'Player' : [] ,
-    'Computer' : []
+    'Computer' : [] ,
+    'Bot_1' : [] ,
+    'Bot_2' : []
 }
+
+def get_move(player) :
+    global Piles
+    # Player Move
+    if player in ['Player'] :
+        p , s = map(int, input("Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : ").split())
+        while not valid_move(p,s):
+            print("Invalid Move")
+            p , s = map(int, input("Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : ").split())
+        Piles[p-1] -= s
+        changedPile = p
+        removedStones = s
+        return changedPile, removedStones
+    
+    # Bot Moves
+    elif player in ['Bot_2','Computer'] :
+        s , v = minimax(Piles,False)
+    elif player in ['Bot_1'] :
+        s , v = minimax(Piles,True)
+    changedPile = 0
+    removedStones = 0
+    for i in range(len(s)):
+        if Piles[i] != s[i] :
+            changedPile = i+1
+            removedStones = Piles[i] - s[i]
+        Piles[i] = s[i]
+    return changedPile, removedStones
 
 def valid_move(pile,stones):
     if pile >= len(Piles) or pile < 0:
@@ -50,36 +79,32 @@ def valid_move(pile,stones):
 
 def main():
     global Piles
-    Piles = list(map(int, input("Enter Stones in the two piles (Space separated) : ").split()))
-    while sum(Piles) :
-        p , s = map(int, input("Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : ").split())
-        while not valid_move(p,s):
-            print("Invalid Move")
-            p , s = map(int, input("Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : ").split())
-        Piles[p-1] -= s
-        print("{} removed {} stones from pile {}".format(players[1],s,p))
-        print("Resulting Piles : {}".format(Piles))
-        moves['Player'].append((p,s))
-        if sum(Piles) == 0:
-            print("{} wins".format(players[1]))
-            print("Moves : {}".format(moves['Player']))
-            break
+    print("""Choose Mode : 
+            1.Bot Vs Bot
+            2.Player Vs Bot""")
+    mode = int(input())
+    players = None
+    if mode == 1 :
+        players = ['Bot_1','Bot_2']
+    elif mode == 2 :
+        players = ['Player','Computer']
+    else :
+        print("[!] Invalid Mode")
+        return
 
-        s , v = minimax(Piles,False)
-        changedPile = 0
-        removedStones = 0
-        for i in range(len(s)):
-            if Piles[i] != s[i] :
-                changedPile = i+1
-                removedStones = Piles[i] - s[i]
-            Piles[i] = s[i]
+    Piles = list(map(int, input("Enter Stones in the two piles (Space separated) : ").split()))
+    turn = 0
+    while sum(Piles) :
+        player = players[turn % 2]
+        turn += 1
+        changedPile , removedStones = get_move(player)
         
-        print("{} removed {} stones from pile {}".format(players[-1],removedStones,changedPile))
+        print("{} removed {} stones from pile {}".format(player,removedStones,changedPile))
         print("Resulting Piles : {}".format(Piles))
-        moves['Computer'].append((changedPile,removedStones))
+        moves[player].append((changedPile,removedStones))
         if sum(Piles) == 0:
-            print("{} wins".format(players[-1]))
-            print("Moves : {}".format(moves['Computer']))
+            print("{} wins".format(player))
+            print("Moves : {}".format(moves[player]))
             break
 
 if __name__ == '__main__':
