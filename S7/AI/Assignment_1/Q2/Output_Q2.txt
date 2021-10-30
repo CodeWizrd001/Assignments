@@ -1,0 +1,66 @@
+Computer Vs Computer
+
+Choose Mode : 
+            1.Bot Vs Bot   
+            2.Player Vs Bot
+1
+Enter Stones in the two piles (Space separated) : 5 6
+Bot_1 removed 1 stones from pile 2
+Resulting Piles : [5, 5]
+Bot_2 removed 1 stones from pile 2
+Resulting Piles : [5, 4]
+Bot_1 removed 1 stones from pile 1
+Resulting Piles : [4, 4]
+Bot_2 removed 1 stones from pile 2
+Resulting Piles : [4, 3]
+Bot_1 removed 1 stones from pile 1
+Resulting Piles : [3, 3]
+Bot_2 removed 1 stones from pile 2
+Resulting Piles : [3, 2]
+Bot_1 removed 1 stones from pile 1
+Resulting Piles : [2, 2]
+Bot_2 removed 1 stones from pile 2
+Resulting Piles : [2, 1]
+Bot_1 removed 1 stones from pile 1
+Resulting Piles : [1, 1]
+Bot_2 removed 1 stones from pile 2
+Resulting Piles : [1, 0]
+Bot_1 removed 1 stones from pile 1
+Resulting Piles : [0, 0]
+Bot_1 wins
+Moves : [(2, 1), (1, 1), (1, 1), (1, 1), (1, 1), (1, 1)]
+
+
+
+Player Vs Computer
+
+Choose Mode : 
+            1.Bot Vs Bot   
+            2.Player Vs Bot
+2
+Enter Stones in the two piles (Space separated) : 4 5
+Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : 2 1
+Player removed 1 stones from pile 2
+Resulting Piles : [4, 4]
+Computer removed 1 stones from pile 2
+Resulting Piles : [4, 3]
+Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : 1 1
+Player removed 1 stones from pile 1
+Resulting Piles : [3, 3]
+Computer removed 1 stones from pile 2
+Resulting Piles : [3, 2]
+Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : 1 1
+Player removed 1 stones from pile 1
+Resulting Piles : [2, 2]
+Computer removed 1 stones from pile 2
+Resulting Piles : [2, 1]
+Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : 1 1
+Player removed 1 stones from pile 1
+Resulting Piles : [1, 1]
+Computer removed 1 stones from pile 2
+Resulting Piles : [1, 0]
+Enter Pile and Stones to be removed (Space separated [Pile,Stones]) : 1 1
+Player removed 1 stones from pile 1
+Resulting Piles : [0, 0]
+Player wins
+Moves : [(2, 1), (1, 1), (1, 1), (1, 1), (1, 1)]

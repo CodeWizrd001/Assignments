@@ -71,7 +71,7 @@ def get_move(player) :
     return changedPile, removedStones
 
 def valid_move(pile,stones):
-    if pile >= len(Piles) or pile < 0:
+    if pile > len(Piles) or pile < 1:
         return False
     if stones > Piles[pile-1] or stones < 1:
         return False
