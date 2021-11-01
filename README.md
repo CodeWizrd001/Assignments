@@ -25,3 +25,5 @@
 > [Computer Security](S7/CS%20Lab)
 >
 > [Artifical Intelligence](S7/AI)
+>
+> [Machine Learning](S7/ML)
