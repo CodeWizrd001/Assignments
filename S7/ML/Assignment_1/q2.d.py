@@ -63,14 +63,18 @@ def discriminant(x,mean,cov,feats,p) :
 
 Allfeatures = ['X1','X2','X3']
 
-def classifyWithFeatures(features=1,verbose=True) :
+def classifyWithFeaturesWithError(features=1,verbose=True) :
     if verbose :
         print(f'Classifying using {Allfeatures[:features]}')
+    totalCorrect = 0
+    totalWrong = 0
     for w in data :
         if verbose :
-            print("-"*30)
+            print("-"*35)
             print(" "*10+"Class : ",w)
-            print("-"*30)
+            print("-"*35)
+        classCorrect = 0
+        classWrong = 0
         for i in range(len(data[w])) :
             x = data[w][i]
             discVals = {}
@@ -85,7 +89,23 @@ def classifyWithFeatures(features=1,verbose=True) :
                 p = P[key]
                 discVals[key] = discriminant(x,mean,cov,features,p)
             val = np.argmax(np.array(list(discVals.values())))
+            if w == f'W{val+1}' :
+                classCorrect += 1
+            else :
+                classWrong += 1
             if verbose :
                 print(f'Classified data   {str(x):24s} as  W{val+1}')
+        misclassifed = 100 * classWrong / (classWrong + classCorrect)
+        if verbose :
+            print('-'*35)
+            print(f'Percentage Misclassifed : {misclassifed:.2f}%')
+        totalCorrect += classCorrect
+        totalWrong += classWrong
+    totalMisclassifed = 100 * totalWrong / (totalWrong + totalCorrect)
+    if verbose :
+        print('-'*50)
+        print(f'Total Percentage Misclassifed : {totalMisclassifed:.2f}%')
+        print('-'*50)
+    return totalMisclassifed
     
-classifyWithFeatures(1)
+classifyWithFeaturesWithError(3)
