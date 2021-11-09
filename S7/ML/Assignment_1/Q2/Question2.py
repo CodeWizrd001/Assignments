@@ -42,6 +42,12 @@ data = {
     ]),
 }
 
+P = {
+    'W1': 0.5,
+    'W2': 0.5,
+    'W3': 0
+}
+
 means = {}
 covs = {}
 for key in data:
@@ -74,11 +80,6 @@ def classifyWithFeatures(features=1,verbose=True) :
         for i in range(len(data[w])) :
             x = data[w][i]
             discVals = {}
-            P = {
-                'W1': 0.5,
-                'W2': 0.5,
-                'W3': 0
-            }
             for key in ['W1','W2','W3'] :
                 mean = means[key]
                 cov = covs[key]
