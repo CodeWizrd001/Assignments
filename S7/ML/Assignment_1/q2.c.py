@@ -63,14 +63,16 @@ def discriminant(x,mean,cov,feats,p) :
 
 Allfeatures = ['X1','X2','X3']
 
-def runWithFeaturesWithError(features=1) :
-    print(f'Classifying using {Allfeatures[:features]}')
+def runWithFeaturesWithError(features=1,verbose=True) :
+    if verbose :
+        print(f'Classifying using {Allfeatures[:features]}')
     totalCorrect = 0
     totalWrong = 0
     for w in data :
-        print("-"*30)
-        print(" "*10+"Class : ",w)
-        print("-"*30)
+        if verbose :
+            print("-"*30)
+            print(" "*10+"Class : ",w)
+            print("-"*30)
         classCorrect = 0
         classWrong = 0
         for i in range(len(data[w])) :
@@ -91,14 +93,18 @@ def runWithFeaturesWithError(features=1) :
                 classCorrect += 1
             else :
                 classWrong += 1
-            print(f'Classified data   {str(x):24s} as  W{val+1}')
+            if verbose :
+                print(f'Classified data   {str(x):24s} as  W{val+1}')
         misclassifed = 100 * classWrong / (classWrong + classCorrect)
-        print(f'Percentage Misclassifed : {misclassifed:.2f}%')
+        if verbose :
+            print(f'Percentage Misclassifed : {misclassifed:.2f}%')
         totalCorrect += classCorrect
         totalWrong += classWrong
     totalMisclassifed = 100 * totalWrong / (totalWrong + totalCorrect)
-    print('-'*40)
-    print(f'Total Percentage Misclassifed : {totalMisclassifed:.2f}%')
-    print('-'*40)
+    if verbose :
+        print('-'*40)
+        print(f'Total Percentage Misclassifed : {totalMisclassifed:.2f}%')
+        print('-'*40)
+    return totalMisclassifed
     
 runWithFeaturesWithError(2)

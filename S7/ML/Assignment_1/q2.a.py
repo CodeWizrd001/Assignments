@@ -63,12 +63,14 @@ def discriminant(x,mean,cov,feats,p) :
 
 Allfeatures = ['X1','X2','X3']
 
-def runWithFeatures(features=1) :
-    print(f'Classifying using {Allfeatures[:features]}')
+def runWithFeatures(features=1,verbose=True) :
+    if verbose :
+        print(f'Classifying using {Allfeatures[:features]}')
     for w in data :
-        print("-"*30)
-        print(" "*10+"Class : ",w)
-        print("-"*30)
+        if verbose :
+            print("-"*30)
+            print(" "*10+"Class : ",w)
+            print("-"*30)
         for i in range(len(data[w])) :
             x = data[w][i]
             discVals = {}
@@ -83,6 +85,7 @@ def runWithFeatures(features=1) :
                 p = P[key]
                 discVals[key] = discriminant(x,mean,cov,features,p)
             val = np.argmax(np.array(list(discVals.values())))
-            print(f'Classified data   {str(x):24s} as  W{val+1}')
+            if verbose :
+                print(f'Classified data   {str(x):24s} as  W{val+1}')
     
 runWithFeatures(1)
