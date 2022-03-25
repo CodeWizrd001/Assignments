@@ -27,3 +27,8 @@
 > [Artifical Intelligence](S7/AI)
 >
 > [Machine Learning](S7/ML)
+
+> ## [Semester 8](S8)
+>
+> [Intro to Information Security](S7/IIS)
+>
