@@ -95,5 +95,4 @@ int main()
 
    // Random select 1 < e < phi
    // find d , inverse e with respect to phi
-
 }
