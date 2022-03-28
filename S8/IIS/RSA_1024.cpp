@@ -4,7 +4,7 @@
 using namespace std;
 using namespace NTL;
 
-#define BIT_LENGTH 512
+#define BIT_LENGTH 1024
 #define ERR_THRESHOLD 1000 
 // Error in range 2^(-ERR_THRESHOLD)
 
