@@ -14,12 +14,13 @@ ZZ modInverse(ZZ x,ZZ p)
 
 class Point {
     private:
-        ZZ x ;
-        ZZ y ;
         ZZ p ;
         ZZ a ;
         ZZ b ;
     public:
+        ZZ x ;
+        ZZ y ;
+
         Point(ZZ x_,ZZ y_,ZZ p_,ZZ a_=ZZ(0),ZZ b_=ZZ(0)) 
         {
             x = x_ ;
@@ -36,6 +37,21 @@ class Point {
             p = P.p ;
             a = P.a ;
             b = P.b ;
+        }
+
+        ZZ get_a() 
+        {
+            return a ;
+        }
+
+        ZZ get_b() 
+        {
+            return b ;
+        }
+
+        ZZ get_p()
+        {
+            return p ;
         }
 
         void display() 
@@ -70,8 +86,17 @@ class Point {
         Point Double()
         {
             ZZ l ;
-
-            ZZ t_y = InvMod(MulMod(ZZ(2),y,p),p) ;
+            ZZ t_y ;
+            try {
+                t_y = InvMod(MulMod(ZZ(2),y,p),p) ;
+            } catch(InvModErrorObject &e) {
+                cout << "Error: " << e.what() << endl ;
+                return Point(ZZ(-1),ZZ(-1),ZZ(-1)) ;
+            } 
+            catch(...) {
+                cout << "[!] Double : Non Invertible Point" << endl ;
+                return Point(ZZ(-1),ZZ(-1),ZZ(p),ZZ(a),ZZ(b)) ;
+            }
             l = MulMod(ZZ(3) * power(x,2) + a,t_y,p) ;
 
             // cout << "[+] Check 2" << endl ;
@@ -82,6 +107,12 @@ class Point {
             ZZ fy = (l*t - y) % p ;
             
             return Point(fx,fy,p,a,b) ;
+        }
+
+        ostream& operator<<(ostream &out) 
+        {
+            out << "Point(" << x << "," << y << "," << p << "," << a << "," << b << ")" ;
+            return out ;
         }
 
         Point operator + (Point const &obj)
@@ -100,12 +131,26 @@ class Point {
             ZZ l ;
             if(Eq(obj))
             {
-                ZZ t_y = InvMod(MulMod(ZZ(2),y,p),p) ;
+                ZZ t_y ;
+                try {
+                    t_y = InvMod(MulMod(ZZ(2),y,p),p) ;
+                } catch(...) {
+                    cout << "[!] + if : Non Invertible Point" << endl ;
+                    return Point(ZZ(-1),ZZ(-1),ZZ(p),ZZ(a),ZZ(b)) ;
+                }
                 l = MulMod(ZZ(3) * power(x,2) + a,t_y,p) ;
             }
             else 
             {
-                ZZ t_x = InvMod(x_,p) ;
+                ZZ t_x ;
+                try {
+                    x_ = x_ % p ;
+                    t_x = InvMod(x_,p) ;
+                } catch(...) {
+                    cout << "[!] + else : Non Invertible Point : " << x_ << endl ;
+                    cout << "[!] GCD : " << GCD(x_,p) << endl ;
+                    return Point(ZZ(-1),ZZ(-1),ZZ(p),ZZ(a),ZZ(b)) ;
+                }
                 l = MulMod(y_,t_x,p) ;
             }
             // cout << "L  : " << l << endl ;
@@ -136,7 +181,7 @@ class Point {
             BytesFromZZ(p, k, NumBytes(k)); // pp = byte-representation of N
             for(int i=0;i<NumBytes(k);i+=1) 
             {
-                bitset<8> x(p[i]) ; // x = binary representation of p[i]
+                bitset<8> x(p[i]) ;         // x = binary representation of p[i]
                 for(int j=0;j<8;j+=1)
                 {
                     // cout << x[j] << " : " << endl ;
