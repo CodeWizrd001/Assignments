@@ -1,79 +1,99 @@
-#include <NTL/ZZ_pXFactoring.h>
-#include <NTL/ZZ.h>
+#include "ECC.h"
+#include <string.h>
+#include <vector>
 
-using namespace std;
-using namespace NTL;
+#define K_VALUE 1234
 
-#define BIT_LENGTH 512
-#define ERR_THRESHOLD 1000
+typedef struct Key
+{
+   ZZ privateKey ;
+   Point publicKey ;
+} Key ;
 
-// Some Hash Function - Should be SHA1
-ZZ Hash(ZZ m)
+// Function to calculate Legendre of a with p
+int Legendre(ZZ a,ZZ p)
+{
+   if(a>=p || a<0)
+      return Legendre(a%p,p) ;
+   else if(a==0)
+      return 0 ;
+   else if(a==1)
+      return 1 ;
+   else if(a==2)
+   {
+      if(p%8==1 || p%8==7)
+         return 1 ;
+      else
+         return -1 ;
+   }
+   else if(a==p-1)
+   {
+      if(p%4==1)
+         return 1 ;
+      else
+         return -1 ;
+   }
+   else
+   {
+      if((p-1)%2==0 || (a-1)%2==0)
+         return Legendre(a,p/2) ;
+      else
+         return -Legendre(a,p/2) ;
+   }
+}
+
+
+Key KeyGen(ZZ n,Point B) 
+{
+   ZZ PrivateKey = RandomBnd(n) ;
+   Point PublicKey = B * PrivateKey ;
+   Key k = {PrivateKey,PublicKey} ;
+   return k ;
+}
+
+Point messageEncode(ZZ m,Point BasePoint)
+{
+   ZZ k = ZZ(K_VALUE) ;
+   ZZ Xj , Yj , Sj ;
+
+   for(int j=0;j<k;j+=1)
+   {
+      Xj = k * m + j ;
+      Sj = power(Xj,3) + BasePoint.get_a()*Xj + BasePoint.get_b() ;
+      Sj = Sj % BasePoint.get_p() ;
+      if(Jacobi(Sj,BasePoint.get_p())==1)
+      {
+         Yj = PowerMod(Sj,(BasePoint.get_p()+1)/ZZ(4),BasePoint.get_p()) ;   
+         return Point(Xj,Yj,BasePoint.get_p(),BasePoint.get_a(),BasePoint.get_b()) ;
+      }
+   }
+   return BasePoint * m ;
+}
+
+ZZ messageDecode(Point Pm,Point BasePoint)
+{
+   ZZ k = ZZ(K_VALUE) ;
+   return Pm.x / k ;
+}
+
+// Some Hash Function
+ZZ Hash(Point P)
 {
    ZZ h ;
-   h = m ;
+   h = P.x ;
    return h ;
 }
 
-Vec<ZZ> Setup() 
-{
-   Vec<ZZ> v ;
-   v.FixLength(3) ;
-
-   ZZ p , q , t , g , h;
-
-   GenGermainPrime(q,BIT_LENGTH,ERR_THRESHOLD) ;
-   p = 2*q + 1 ;
-
-   g = 1 ;
-   while(g==1) 
-   {
-      h = RandomBnd(p) ;
-      g = PowerMod(h,(p-1)/q,p) ;
-   }
-
-   v[0] = p ;
-   v[1] = q ;
-   v[2] = g ;
-   return v ;
-}
-
-// Key Generation
-Vec<ZZ> KeyGen(ZZ p,ZZ q,ZZ g)
-{
-   Vec<ZZ> v ;
-   v.FixLength(2) ;
-
-   ZZ x,y ;
-
-   do {
-      x = RandomBnd(q) ;
-   } while (GCD(x,p)!=1) ;
-
-   y = PowerMod(g,x,p); 
-   v[0] = x ;
-   v[1] = y ;
-
-   return v ;
-}
-
 // Sign
-Vec<ZZ> Sign(ZZ m,ZZ p,ZZ q,ZZ g,ZZ x)
+Vec<ZZ> Sign(Point Pm,ZZ privateKey,ZZ sessionKey,ZZ n,Point BasePoint)
 {
    Vec<ZZ> v ;
    v.FixLength(2) ;
 
-   ZZ k,r,t ;
+   Point R = BasePoint * sessionKey ;
+   ZZ r = R.x ;
 
-   do {
-      k = RandomBnd(q) ;
-      t = PowerMod(g,k,p) ;
-      r = (t%q) ;
-   } while (r==0) ;
-
-   ZZ h = Hash(m) ;
-
-   ZZ s = (InvMod(k,q)*(h+x*r))%q ;
+   ZZ s = (InvMod(sessionKey,n) * (Hash(Pm) + privateKey * r)) % n ;
 
    v[0] = r ;
    v[1] = s ;
@@ -82,75 +102,100 @@ Vec<ZZ> Sign(ZZ m,ZZ p,ZZ q,ZZ g,ZZ x)
 }
 
 // Verify
-bool Verify(ZZ m,Vec<ZZ> v,ZZ y,ZZ p,ZZ q,ZZ g)
+bool Verify(Vec<ZZ> key,ZZ n,Point Pm,Point publicKey,Point BasePoint)
 {
-   ZZ r = v[0] ;
-   ZZ s = v[1] ;
+   ZZ r = key[0] ;
+   ZZ s = key[1] ;
 
-   if(r<0 || r>=q) return false ;
-   if(s<0 || s>=q) return false ;
+   ZZ w = InvMod(s,n) ;
+   ZZ u = (Hash(Pm) * w)%n ;
+   ZZ v = (r * w)%n ;
 
-   ZZ h = Hash(m) ;
+   Point R = (BasePoint * u) + (publicKey * v) ;
 
-   ZZ w = InvMod(s,q) ;
-   ZZ u1 = (h*w)%q ;
-   ZZ u2 = (r*w)%q ;
-
-   ZZ t = (PowerMod(g,u1,p) * PowerMod(y,u2,p))%p ;
-
-   ZZ r_ = (t%q) ;
-
-   if (r_==r) 
+   if(R.x==r)
       return true ;
-   else 
+   else
       return false ;
 }
 
-int main()
+int main() 
 {
-   ZZ p , q , n , phi , g , d ;
+   Vec<ZZ> curveParams ;
+   curveParams.SetLength(3) ;
+   curveParams[0] = power(ZZ(2),192) - power(ZZ(2),64) - ZZ(1) ;   // p
+   curveParams[1] = ZZ(-3) ;                                       // a
+   curveParams[2] = conv<ZZ>("2455155546008943817740293915197451784769108058161191238065") ;    // b
 
-   Vec<ZZ> set = Setup() ;
-   p = set[0] ;
-   q = set[1] ;
-   g = set[2] ;
+   ZZ p = curveParams[0] ;
+   ZZ a = curveParams[1] ;
+   ZZ b = curveParams[2] ;
 
-   cout << "P   : " << p << endl ;
-   cout << "Q   : " << q << endl ;
-   cout << "G   : " << g << endl ;
-   cout << "------------------------------------------------------------------------------------------" << endl ;
+   ZZ n = conv<ZZ>("6277101735386680763835789423176059013767194773182842284081") ;    // n - Order
+   ZZ seed = conv<ZZ>("275585503993527016686210752207080241786546919125") ;
+   ZZ h = ZZ(1) ;
+   ZZ r = conv<ZZ>("1191689908718309326471930603292001425137626342642504031845") ;
 
-   ZZ x,y ;
-   Vec<ZZ> keys = KeyGen(p,q,g) ;
-   x = keys[0] ;
-   y = keys[1] ;
-   
-   cout << "Keys" << endl ;
-   cout << "X   : " << x << endl ;
-   cout << "Y   : " << y << endl ;
-   cout << "------------------------------------------------------------------------------------------" << endl ;
+   ZZ x = conv<ZZ>("602046282375688656758213480587526111916698976636884684818") ;
+   ZZ y = conv<ZZ>("174050332293622031404857552280219410364023488927386650641") ;
 
-   ZZ m ;
-   m = ZZ(12345) ;
+   Point BasePoint = Point(
+   x,              // x
+   y,              // y
+   curveParams[0],
+   curveParams[1],
+   curveParams[2]
+   ) ;
 
-   Vec<ZZ> sign = Sign(m,p,q,g,x) ;
-   cout << "Message : " << m << endl ;
-   cout << "Signature" << endl ;
-   cout << "r     : " << sign[0] << endl ;
-   cout << "s     : " << sign[1] << endl ;
-   bool v = Verify(m,sign,y,p,q,g) ;
-   cout << "Valid : " << v << endl ;
-   cout << "------------------------------------------------------------------------------------------" << endl ;
+   Key key = KeyGen(n,BasePoint) ;
 
+   int message = 4321 ;
+   ZZ m = ZZ(message) ;
 
-   sign[0] = sign[0] + 1 ;
-   cout << "Message : " << m << endl ;
-   cout << "Signature" << endl ;
-   cout << "r     : " << sign[0] << endl ;
-   cout << "s     : " << sign[1] << endl ;
-   v = Verify(m,sign,y,p,q,g) ;
-   cout << "Valid : " << v << endl ;
-   cout << "------------------------------------------------------------------------------------------" << endl ;
+   Point Pm = messageEncode(m,BasePoint) ;
 
-   return 0 ;
+   cout << "Actual Message : " << endl ;
+   cout << m << endl ;
+   cout << "--------------------------------------------------------" << endl ;
+
+   cout << "Encoded Message : " << endl ;
+   Pm.display() ;
+   cout << "--------------------------------------------------------" << endl ;
+
+   Key aliceKey = KeyGen(n,BasePoint) ;
+   cout << "Alice Keys : " << endl ;
+   cout << aliceKey.privateKey << endl ;
+   aliceKey.publicKey.display() ;
+   cout << "--------------------------------------------------------" << endl ;
+
+   Key bobKey = KeyGen(n,BasePoint) ;
+   cout << "Bob Keys : " << endl ;
+   cout << bobKey.privateKey << endl ;
+   bobKey.publicKey.display() ;
+   cout << "--------------------------------------------------------" << endl ;
+
+   ZZ k ;
+   do {
+      k = RandomBnd(n) ;
+   } while (GCD(k,n)!=1) ;
+
+   cout << "Session Key : " << endl ;
+   cout << k << endl ;
+   cout << "--------------------------------------------------------" << endl ;
+
+   Vec<ZZ> sign = Sign(Pm,bobKey.privateKey,k,n,BasePoint) ;
+   cout << "Signature : " << endl ;
+   cout << "r    : " << sign[0] << endl ;
+   cout << "s    : " << sign[1] << endl ;
+   bool t = Verify(sign,n,Pm,bobKey.publicKey,BasePoint) ;
+   cout << "Valid   : " << t << endl ;
+   cout << "--------------------------------------------------------" << endl ;
+
+   sign[0] = sign[0] + 1234 ;
+   cout << "Signature : " << endl ;
+   cout << "r    : " << sign[0] << endl ;
+   cout << "s    : " << sign[1] << endl ;
+   t = Verify(sign,n,Pm,bobKey.publicKey,BasePoint) ;
+   cout << "Valid   : " << t << endl ;
+   cout << "--------------------------------------------------------" << endl ;
 }
