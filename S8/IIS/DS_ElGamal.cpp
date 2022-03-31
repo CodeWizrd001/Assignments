@@ -57,34 +57,53 @@ Vec<ZZ> KeyGen(ZZ p,ZZ q,ZZ g)
    return v ;
 }
 
-// Encryption
-Vec<ZZ> encrypt(ZZ m,ZZ p,ZZ q,ZZ g,ZZ y)
+// Sign
+Vec<ZZ> Sign(ZZ m,ZZ p,ZZ q,ZZ g,ZZ x)
 {
    Vec<ZZ> v ;
    v.FixLength(2) ;
 
-   ZZ k ;
+   ZZ k,r,t ;
 
    do {
       k = RandomBnd(q) ;
-   } while (GCD(k,p)!=1) ;
+      t = PowerMod(g,k,p) ;
+      r = (t%q) ;
+   } while (r==0) ;
 
-   ZZ c1,c2 ;
+   ZZ h = Hash(m) ;
 
-   c1 = PowerMod(g,k,p) ;
-   c2 = MulMod(m,PowerMod(y,k,p),p) ;
-   
-   v[0] = c1 ; 
-   v[1] = c2 ;
-   return v;
+   ZZ s = (InvMod(k,q)*(h+x*r))%q ;
+
+   v[0] = r ;
+   v[1] = s ;
+
+   return v ;
 }
 
-// Decryption
-ZZ decrypt(ZZ c1,ZZ c2,ZZ x,ZZ p) 
+// Verify
+bool Verify(ZZ m,Vec<ZZ> v,ZZ y,ZZ p,ZZ q,ZZ g)
 {
-   ZZ m ;
-   m = MulMod(c2,PowerMod(c1,-x,p),p);
-   return m ;
+   ZZ r = v[0] ;
+   ZZ s = v[1] ;
+
+   if(r<0 || r>=q) return false ;
+   if(s<0 || s>=q) return false ;
+
+   ZZ h = Hash(m) ;
+
+   ZZ w = InvMod(s,q) ;
+   ZZ u1 = (h*w)%q ;
+   ZZ u2 = (r*w)%q ;
+
+   ZZ t = (PowerMod(g,u1,p) * PowerMod(y,u2,p))%p ;
+
+   ZZ r_ = (t%q) ;
+
+   if (r_==r) 
+      return true ;
+   else 
+      return false ;
 }
 
 int main()
@@ -99,6 +118,7 @@ int main()
    cout << "P   : " << p << endl ;
    cout << "Q   : " << q << endl ;
    cout << "G   : " << g << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
 
    ZZ x,y ;
    Vec<ZZ> keys = KeyGen(p,q,g) ;
@@ -108,22 +128,29 @@ int main()
    cout << "Keys" << endl ;
    cout << "X   : " << x << endl ;
    cout << "Y   : " << y << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
 
-   ZZ c1 , c2 ;
    ZZ m ;
+   m = ZZ(12345) ;
 
-   m = 2567898 ;
-   cout << "Message" << endl ;
-   cout << m << endl ;
-   Vec<ZZ> c = encrypt(ZZ(2567),p,q,g,y) ;
-   c1 = c[0] ;
-   c2 = c[1] ;
+   Vec<ZZ> sign = Sign(m,p,q,g,x) ;
+   cout << "Message : " << m << endl ;
+   cout << "Signature" << endl ;
+   cout << "r     : " << sign[0] << endl ;
+   cout << "s     : " << sign[1] << endl ;
+   bool v = Verify(m,sign,y,p,q,g) ;
+   cout << "Valid : " << v << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
 
-   cout << "C1  : " << c1 << endl ;
-   cout << "C2  : " << c2 << endl ;
 
-   ZZ t ;
-   t = decrypt(c1,c2,x,p) ;
+   sign[0] = sign[0] + 1 ;
+   cout << "Message : " << m << endl ;
+   cout << "Signature" << endl ;
+   cout << "r     : " << sign[0] << endl ;
+   cout << "s     : " << sign[1] << endl ;
+   v = Verify(m,sign,y,p,q,g) ;
+   cout << "Valid : " << v << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
 
-   cout << "T   : " << t << endl ;
+   return 0 ;
 }

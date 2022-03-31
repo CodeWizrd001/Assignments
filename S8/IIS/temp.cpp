@@ -1,40 +1,13 @@
+#include <NTL/ZZ_pXFactoring.h>
 #include <NTL/ZZ.h>
 
 using namespace std;
 using namespace NTL;
 
 #define BIT_LENGTH 512
-#define ERR_THRESHOLD 1000 
-// Error in range 2^(-ERR_THRESHOLD)
+#define ERR_THRESHOLD 1000
 
-Vec<ZZ> KeyGen() 
-{
-   ZZ p , q , n , phi , e , d ;
-   Vec<ZZ> v ;
-   v.FixLength(3) ;
-
-   GenPrime(p,BIT_LENGTH/2,ERR_THRESHOLD) ;
-   GenPrime(q,BIT_LENGTH/2,ERR_THRESHOLD) ;
-   n = p * q ;
-   phi = (p-1) * (q-1) ;
-
-   ZZ t ;
-   t = 0 ;
-   e = 0 ;
-   while (t != 1 && e != 1) 
-   {
-      e = RandomBnd(phi) ;
-      t = GCD(e,phi) ;
-   }
-   d = InvMod(e,phi) ;
-   
-   v[0] = n ;
-   v[1] = e ;
-   v[2] = d ;
-   return v ;
-}
-
-// Some Hash Function
+// Some Hash Function - Should be SHA1
 ZZ Hash(ZZ m)
 {
    ZZ h ;
@@ -42,63 +15,142 @@ ZZ Hash(ZZ m)
    return h ;
 }
 
-//Sign
-ZZ Sign(ZZ h,ZZ d,ZZ n) 
+Vec<ZZ> Setup() 
 {
-   ZZ c ;
-   c = PowerMod(h,d,n) ;
-   return c ;
+   Vec<ZZ> v ;
+   v.FixLength(3) ;
+
+   ZZ p , q , t , g , h;
+
+   GenGermainPrime(q,BIT_LENGTH,ERR_THRESHOLD) ;
+   p = 2*q + 1 ;
+
+   g = 1 ;
+   while(g==1) 
+   {
+      h = RandomBnd(p) ;
+      g = PowerMod(h,(p-1)/q,p) ;
+   }
+
+   v[0] = p ;
+   v[1] = q ;
+   v[2] = g ;
+   return v ;
+}
+
+// Key Generation
+Vec<ZZ> KeyGen(ZZ p,ZZ q,ZZ g)
+{
+   Vec<ZZ> v ;
+   v.FixLength(2) ;
+
+   ZZ x,y ;
+
+   do {
+      x = RandomBnd(q) ;
+   } while (GCD(x,p)!=1) ;
+
+   y = PowerMod(g,x,p); 
+   v[0] = x ;
+   v[1] = y ;
+
+   return v ;
+}
+
+// Sign
+Vec<ZZ> Sign(ZZ m,ZZ p,ZZ q,ZZ g,ZZ x)
+{
+   Vec<ZZ> v ;
+   v.FixLength(2) ;
+
+   ZZ k,r,t ;
+
+   do {
+      k = RandomBnd(q) ;
+      t = PowerMod(g,k,p) ;
+      r = (t%q) ;
+   } while (r==0) ;
+
+   ZZ h = Hash(m) ;
+
+   ZZ s = (InvMod(k,q)*(h+x*r))%q ;
+
+   v[0] = r ;
+   v[1] = s ;
+
+   return v ;
 }
 
 // Verify
-bool Verify(ZZ m,ZZ sigma,ZZ e,ZZ n) 
+bool Verify(ZZ m,Vec<ZZ> v,ZZ y,ZZ p,ZZ q,ZZ g)
 {
-   ZZ c ;
+   ZZ r = v[0] ;
+   ZZ s = v[1] ;
+
+   if(r<0 || r>=q) return false ;
+   if(s<0 || s>=q) return false ;
+
    ZZ h = Hash(m) ;
-   ZZ h_ = PowerMod(sigma,e,n) ;
-   if (h == h_)
-      return 1 ;
-   else
-      return 0 ;
+
+   ZZ w = InvMod(s,q) ;
+   ZZ u1 = (h*w)%q ;
+   ZZ u2 = (r*w)%q ;
+
+   ZZ t = (PowerMod(g,u1,p) * PowerMod(y,u2,p))%p ;
+
+   ZZ r_ = (t%q) ;
+
+   if (r_==r) 
+      return true ;
+   else 
+      return false ;
 }
 
 int main()
 {
-   ZZ p , q , n , phi , e , d ;
+   ZZ p , q , n , phi , g , d ;
 
-   Vec<ZZ> keys = KeyGen() ;
-   n = keys[0] ;
-   e = keys[1] ;
-   d = keys[2] ;
+   Vec<ZZ> set = Setup() ;
+   p = set[0] ;
+   q = set[1] ;
+   g = set[2] ;
 
-   // cout << "N   : " << n << endl ;
-   // cout << "E   : " << e << endl ;
-   // cout << "D   : " << d << endl ;
+   cout << "P   : " << p << endl ;
+   cout << "Q   : " << q << endl ;
+   cout << "G   : " << g << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
 
-   ZZ m , sigma ;
-
-   m = 2567 ;
-   ZZ h = m ;        // Some hash of message M
+   ZZ x,y ;
+   Vec<ZZ> keys = KeyGen(p,q,g) ;
+   x = keys[0] ;
+   y = keys[1] ;
    
-   cout << "Message        : " << m << endl ;
-   cout << "Hashed Message : " << h << endl ;
-   cout << "--------------------------------------------------------------------------------------" << endl ;
-   
-   sigma = Sign(m,d,n) ;
-   cout << "Sign   : " << sigma << endl ;
-   cout << "--------------------------------------------------------------------------------------" << endl ;
-   
-   bool t = Verify(h,sigma,e,n) ;
-   cout << "Pass 1" << endl ;
+   cout << "Keys" << endl ;
+   cout << "X   : " << x << endl ;
+   cout << "Y   : " << y << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
+
+   ZZ m ;
+   m = ZZ(12345) ;
+
+   Vec<ZZ> sign = Sign(m,p,q,g,x) ;
    cout << "Message : " << m << endl ;
-   cout << "Sign    : " << sigma << endl ;
-   cout << "Valid   : " << t << endl ;
-   cout << "--------------------------------------------------------------------------------------" << endl ;
-   
-   bool t1 = Verify(h,sigma + 1,e,n) ;
-   cout << "Pass 2" << endl ;
+   cout << "Signature" << endl ;
+   cout << "r     : " << sign[0] << endl ;
+   cout << "s     : " << sign[1] << endl ;
+   bool v = Verify(m,sign,y,p,q,g) ;
+   cout << "Valid : " << v << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
+
+
+   sign[0] = sign[0] + 1 ;
    cout << "Message : " << m << endl ;
-   cout << "Sign    : " << sigma + 1 << endl ;
-   cout << "Valid   : " << t1 << endl ;
-   cout << "--------------------------------------------------------------------------------------" << endl ;
+   cout << "Signature" << endl ;
+   cout << "r     : " << sign[0] << endl ;
+   cout << "s     : " << sign[1] << endl ;
+   v = Verify(m,sign,y,p,q,g) ;
+   cout << "Valid : " << v << endl ;
+   cout << "------------------------------------------------------------------------------------------" << endl ;
+
+   return 0 ;
 }
