@@ -23,8 +23,7 @@ Vec<ZZ> Setup()
 
    GenGermainPrime(q,BIT_LENGTH,ERR_THRESHOLD) ;
    p = 2*q + 1 ;
-   // cout << "P : " << p << ":" << NumBits(p) << ":" << ProbPrime(p) << endl ;
-   // cout << "Q : " << q << ":" << NumBits(q) << ":" << ProbPrime(q) << endl ;
+   
    g = 1 ;
    while(g==1) 
    {
@@ -126,7 +125,4 @@ int main()
    t = decrypt(c1,c2,x,p) ;
 
    cout << "T   : " << t << endl ;
-   // Random select 1 < e < phi
-   // find d , inverse e with respect to phi
-
 }

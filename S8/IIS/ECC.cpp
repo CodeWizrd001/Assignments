@@ -58,18 +58,11 @@ Point messageEncode(ZZ m,Point BasePoint)
 
     for(int j=0;j<k;j+=1)
     {
-        // cout << "Trying : " << j << endl ;
         Xj = k * m + j ;
         Sj = power(Xj,3) + BasePoint.get_a()*Xj + BasePoint.get_b() ;
         Sj = Sj % BasePoint.get_p() ;
-        // if(Legendre(Sj,BasePoint.get_p()) == 1)
-        // {
-        //     Yj = PowerMod(Sj,(BasePoint.get_p()+1)/ZZ(4),BasePoint.get_p()) ;
-        //     return Point(Xj,Yj,BasePoint.get_p(),BasePoint.get_a(),BasePoint.get_b()) ;
-        // }
         if(Jacobi(Sj,BasePoint.get_p())==1)
         {
-            // Yj = SqrRootMod(Sj,BasePoint.get_p()) ;
             Yj = PowerMod(Sj,(BasePoint.get_p()+1)/ZZ(4),BasePoint.get_p()) ;   
             return Point(Xj,Yj,BasePoint.get_p(),BasePoint.get_a(),BasePoint.get_b()) ;
         }
@@ -139,11 +132,7 @@ int main()
     ZZ m = ZZ(message) ;
 
     Point Pm = messageEncode(m,BasePoint) ;
-
-    // cout << "Generated Keys : " << endl ;
-    // cout << key.privateKey << endl ;
-    // key.publicKey.display() ;
-
+    
     cout << "Actual Message : " << endl ;
     cout << m << endl ;
     cout << "--------------------------------------------------------" << endl ;

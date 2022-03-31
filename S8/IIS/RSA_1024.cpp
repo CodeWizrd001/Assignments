@@ -1,4 +1,3 @@
-#include <NTL/ZZ_pXFactoring.h>
 #include <NTL/ZZ.h>
 
 using namespace std;
@@ -16,10 +15,6 @@ using namespace NTL;
 // choose e , gcd(e,phi) = 1 
 // find e^-1 % phi
 // 
-
-// ENCRYPTION
-// message , m
-// 
 Vec<ZZ> KeyGen() 
 {
    ZZ p , q , n , phi , e , d ;
@@ -31,11 +26,6 @@ Vec<ZZ> KeyGen()
    n = p * q ;
    phi = (p-1) * (q-1) ;
 
-   // cout << "P   : " << p << endl ;
-   // cout << "Q   : " << q << endl ;
-   // cout << "N   : " << n << endl ;
-   // cout << "Phi : " << phi << endl ;
-
    ZZ t ;
    t = 0 ;
    e = 0 ;
@@ -44,9 +34,8 @@ Vec<ZZ> KeyGen()
       e = RandomBnd(phi) ;
       t = GCD(e,phi) ;
    }
-   // cout << "E   : " << e << endl ;
+
    d = InvMod(e,phi) ;
-   // cout << "D   : " << d << endl ;
    
    v[0] = n ;
    v[1] = e ;
@@ -80,10 +69,6 @@ int main()
    e = keys[1] ;
    d = keys[2] ;
 
-   // cout << "N   : " << n << endl ;
-   // cout << "E   : " << e << endl ;
-   // cout << "D   : " << d << endl ;
-
    ZZ m , c , t ;
 
    m = 2567 ;
@@ -92,7 +77,4 @@ int main()
    cout << "C   : " << c << endl ;
    t = decrypt(c,d,n) ;
    cout << "T   : " << t << endl ;
-
-   // Random select 1 < e < phi
-   // find d , inverse e with respect to phi
 }
