@@ -30,5 +30,5 @@
 
 > ## [Semester 8](S8)
 >
-> [Intro to Information Security](S7/IIS)
+> [Intro to Information Security](S8/IIS)
 >
