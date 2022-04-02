@@ -21,8 +21,8 @@ Vec<ZZ> KeyGen()
    Vec<ZZ> v ;
    v.FixLength(3) ;
 
-   GenPrime(p,BIT_LENGTH/2,ERR_THRESHOLD) ;
-   GenPrime(q,BIT_LENGTH/2,ERR_THRESHOLD) ;
+   GenPrime(p,BIT_LENGTH,ERR_THRESHOLD) ;
+   GenPrime(q,BIT_LENGTH,ERR_THRESHOLD) ;
    n = p * q ;
    phi = (p-1) * (q-1) ;
 
@@ -72,9 +72,9 @@ int main()
    ZZ m , c , t ;
 
    m = 2567 ;
-   cout << "M   : " << m << endl ;
+   cout << "Message     : " << m << endl ;
    c = encrypt(m,e,n) ;
-   cout << "C   : " << c << endl ;
+   cout << "Encrypted   : " << c << endl ;
    t = decrypt(c,d,n) ;
-   cout << "T   : " << t << endl ;
+   cout << "Decrypted   : " << t << endl ;
 }

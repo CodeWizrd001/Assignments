@@ -98,6 +98,7 @@ int main()
    cout << "P   : " << p << endl ;
    cout << "Q   : " << q << endl ;
    cout << "G   : " << g << endl ;
+   cout << "---------------------------------------------------------------" << endl ;
 
    ZZ x,y ;
    Vec<ZZ> keys = KeyGen(p,q,g) ;
@@ -107,22 +108,26 @@ int main()
    cout << "Keys" << endl ;
    cout << "X   : " << x << endl ;
    cout << "Y   : " << y << endl ;
+   cout << "---------------------------------------------------------------" << endl ;
 
    ZZ c1 , c2 ;
    ZZ m ;
 
-   m = 2567898 ;
+   m = 123456 ;
    cout << "Message" << endl ;
    cout << m << endl ;
-   Vec<ZZ> c = encrypt(ZZ(2567),p,q,g,y) ;
+   cout << "---------------------------------------------------------------" << endl ;
+   Vec<ZZ> c = encrypt(m,p,q,g,y) ;
    c1 = c[0] ;
    c2 = c[1] ;
 
    cout << "C1  : " << c1 << endl ;
    cout << "C2  : " << c2 << endl ;
+   cout << "---------------------------------------------------------------" << endl ;
 
    ZZ t ;
    t = decrypt(c1,c2,x,p) ;
 
-   cout << "T   : " << t << endl ;
+   cout << "Decrypted Message   : " << t << endl ;
+   cout << "---------------------------------------------------------------" << endl ;
 }
