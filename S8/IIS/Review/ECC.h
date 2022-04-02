@@ -17,6 +17,18 @@ class Point {
         ZZ p ;
         ZZ a ;
         ZZ b ;
+        string zztostring(ZZ num)
+        {
+            long len = ceil(log(num)/log(128));
+            char str[len];
+            for(long i = len-1; i >= 0; i--)
+            {
+                str[i] = conv<int>(num % 128);
+                num /= 128;
+            }
+
+            return (string) str;
+        }
     public:
         ZZ x ;
         ZZ y ;
@@ -60,6 +72,18 @@ class Point {
                  << x << "," 
                  << y << "," 
                  << p << ")" << endl ;
+        }
+
+        string toString() 
+        {
+            string str = "Point(" ;
+            str += zztostring(x) ;
+            str += "," ;
+            str += zztostring(y) ;
+            str += "," ;
+            str += zztostring(p) ;
+            str += ")" ;
+            return str ;
         }
 
         Point inverse()

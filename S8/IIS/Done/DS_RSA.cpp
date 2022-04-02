@@ -1,4 +1,5 @@
 #include <NTL/ZZ.h>
+#include <openssl/sha.h>
 
 using namespace std;
 using namespace NTL;
@@ -34,18 +35,56 @@ Vec<ZZ> KeyGen()
    return v ;
 }
 
-// Some Hash Function
+char *hexdigest(unsigned char *md, int len)
+{
+    static char buf[80];
+    int i;
+    for (i = 0; i < len; i++)
+        sprintf(buf + i * 2, "%02x", md[i]);
+    return buf;
+}
+
+ZZ hexToZZ(char *hex)
+{
+   ZZ res = ZZ(0);
+   int i;
+   for (i = 2; i < strlen(hex); i += 2)
+   {
+      res <<= 8;
+      res += hex[i];
+   }
+   return res ;
+}
+
+string numberToString(ZZ num)
+{
+    long len = ceil(log(num)/log(128));
+    char str[len];
+    for(long i = len-1; i >= 0; i--)
+    {
+        str[i] = conv<int>(num % 128);
+        num /= 128;
+    }
+
+    return (string) str;
+}
+
+// SHA1
 ZZ Hash(ZZ m)
 {
-   ZZ h ;
-   h = m ;
+   string s = numberToString(m);
+   unsigned char *str = (unsigned char*)s.c_str();
+   unsigned char hash[SHA_DIGEST_LENGTH]; // == 20
+   SHA1(str, sizeof(str) - 1, hash);
+   ZZ h = hexToZZ(hexdigest(hash, SHA_DIGEST_LENGTH));
    return h ;
 }
 
 //Sign
-ZZ Sign(ZZ h,ZZ d,ZZ n) 
+ZZ Sign(ZZ m,ZZ d,ZZ n) 
 {
    ZZ c ;
+   ZZ h = Hash(m) ;
    c = PowerMod(h,d,n) ;
    return c ;
 }
@@ -74,24 +113,24 @@ int main()
    ZZ m , sigma ;
 
    m = 2567 ;
-   ZZ h = m ;        // Some hash of message M
+   ZZ h = Hash(m) ;        // Some hash of message M
    
    cout << "Message        : " << m << endl ;
    cout << "Hashed Message : " << h << endl ;
    cout << "--------------------------------------------------------------------------------------" << endl ;
    
    sigma = Sign(m,d,n) ;
-   cout << "Sign   : " << sigma << endl ;
+   cout << "Sign    : " << sigma << endl ;
    cout << "--------------------------------------------------------------------------------------" << endl ;
    
-   bool t = Verify(h,sigma,e,n) ;
+   bool t = Verify(m,sigma,e,n) ;
    cout << "Pass 1" << endl ;
    cout << "Message : " << m << endl ;
    cout << "Sign    : " << sigma << endl ;
    cout << "Valid   : " << t << endl ;
    cout << "--------------------------------------------------------------------------------------" << endl ;
    
-   bool t1 = Verify(h,sigma + 1,e,n) ;
+   bool t1 = Verify(m,sigma + 1,e,n) ;
    cout << "Pass 2" << endl ;
    cout << "Message : " << m << endl ;
    cout << "Sign    : " << sigma + 1 << endl ;

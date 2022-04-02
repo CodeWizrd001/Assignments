@@ -1,4 +1,3 @@
-#include <NTL/ZZ_pXFactoring.h>
 #include <NTL/ZZ.h>
 
 using namespace std;

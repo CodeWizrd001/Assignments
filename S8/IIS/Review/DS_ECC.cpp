@@ -1,6 +1,7 @@
 #include "ECC.h"
 #include <string.h>
 #include <vector>
+#include <openssl/sha.h>
 
 #define K_VALUE 1234
 
@@ -76,11 +77,47 @@ ZZ messageDecode(Point Pm,Point BasePoint)
    return Pm.x / k ;
 }
 
-// Some Hash Function
-ZZ Hash(Point P)
+char *hexdigest(unsigned char *md, int len)
 {
-   ZZ h ;
-   h = P.x ;
+    static char buf[80];
+    int i;
+    for (i = 0; i < len; i++)
+        sprintf(buf + i * 2, "%02x", md[i]);
+    return buf;
+}
+
+ZZ hexToZZ(char *hex)
+{
+   ZZ res = ZZ(0);
+   int i;
+   for (i = 2; i < strlen(hex); i += 2)
+   {
+      res <<= 8;
+      res += hex[i];
+   }
+   return res ;
+}
+
+string numberToString(ZZ num)
+{
+    long len = ceil(log(num)/log(128));
+    char str[len];
+    for(long i = len-1; i >= 0; i--)
+    {
+        str[i] = conv<int>(num % 128);
+        num /= 128;
+    }
+
+    return (string) str;
+}
+
+// Some Hash Function
+ZZ Hash(string s)
+{
+   unsigned char *str = (unsigned char*)s.c_str();
+   unsigned char hash[SHA_DIGEST_LENGTH]; // == 20
+   SHA1(str, sizeof(str) - 1, hash);
+   ZZ h = hexToZZ(hexdigest(hash, SHA_DIGEST_LENGTH));
    return h ;
 }
 
@@ -93,7 +130,7 @@ Vec<ZZ> Sign(Point Pm,ZZ privateKey,ZZ sessionKey,ZZ n,Point BasePoint)
    Point R = BasePoint * sessionKey ;
    ZZ r = R.x ;
 
-   ZZ s = (InvMod(sessionKey,n) * (Hash(Pm) + privateKey * r)) % n ;
+   ZZ s = (InvMod(sessionKey,n) * (Hash(Pm.toString()) + privateKey * r)) % n ;
 
    v[0] = r ;
    v[1] = s ;
@@ -108,7 +145,8 @@ bool Verify(Vec<ZZ> key,ZZ n,Point Pm,Point publicKey,Point BasePoint)
    ZZ s = key[1] ;
 
    ZZ w = InvMod(s,n) ;
-   ZZ u = (Hash(Pm) * w)%n ;
+   
+   ZZ u = (Hash(Pm.toString()) * w)%n ;
    ZZ v = (r * w)%n ;
 
    Point R = (BasePoint * u) + (publicKey * v) ;
