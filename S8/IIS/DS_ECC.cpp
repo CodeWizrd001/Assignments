@@ -1,4 +1,6 @@
 #include "ECC.h"
+#include "crypto.h"
+
 #include <string.h>
 #include <vector>
 #include <openssl/sha.h>
@@ -42,58 +44,6 @@ ZZ messageDecode(Point Pm,Point BasePoint)
 {
    ZZ k = ZZ(K_VALUE) ;
    return Pm.x / k ;
-}
-
-char *hexdigest(unsigned char *md, int len)
-{
-    static char buf[80];
-    int i;
-    for (i = 0; i < len; i++)
-        sprintf(buf + i * 2, "%02x", md[i]);
-    return buf;
-}
-
-ZZ hexToZZ(char *hex)
-{
-   cout << "hexToZZ  : " << hex << endl ;
-   ZZ res = ZZ(0);
-   int i;
-   for (i = 0; i < strlen(hex); i += 1)
-   {
-      res <<= 4;
-      char x = hex[i];
-      if(x>='0' && x <='9')
-         res += hex[i]-48;
-      else if(x>='a' && x <='f')
-         res += hex[i]-87;
-      else if(x>='A' && x <='F')
-         res += hex[i]-55;
-   }
-   return res ;
-}
-
-string numberToString(ZZ num)
-{
-    long len = ceil(log(num)/log(128));
-    char str[len];
-    for(long i = len-1; i >= 0; i--)
-    {
-        str[i] = conv<int>(num % 128);
-        num /= 128;
-    }
-
-    return (string) str;
-}
-
-// SHA1
-ZZ Hash(ZZ m)
-{
-   string s = numberToString(m);
-   unsigned char *str = (unsigned char*)s.c_str();
-   unsigned char hash[SHA_DIGEST_LENGTH]; // == 20
-   SHA1(str, sizeof(str) - 1, hash);
-   ZZ h = hexToZZ(hexdigest(hash, SHA_DIGEST_LENGTH));
-   return h ;
 }
 
 // Sign
