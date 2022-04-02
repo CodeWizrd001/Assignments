@@ -46,12 +46,19 @@ char *hexdigest(unsigned char *md, int len)
 
 ZZ hexToZZ(char *hex)
 {
+   cout << "hexToZZ  : " << hex << endl ;
    ZZ res = ZZ(0);
    int i;
-   for (i = 2; i < strlen(hex); i += 2)
+   for (i = 0; i < strlen(hex); i += 1)
    {
-      res <<= 8;
-      res += hex[i];
+      res <<= 4;
+      char x = hex[i];
+      if(x>='0' && x <='9')
+         res += hex[i]-48;
+      else if(x>='a' && x <='f')
+         res += hex[i]-87;
+      else if(x>='A' && x <='F')
+         res += hex[i]-55;
    }
    return res ;
 }

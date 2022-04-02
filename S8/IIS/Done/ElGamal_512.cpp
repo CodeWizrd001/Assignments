@@ -5,14 +5,7 @@ using namespace NTL;
 
 #define BIT_LENGTH 512
 #define ERR_THRESHOLD 1000
-// Setup
-// Choose prime p
-// l and t bits
-// Choose t bit prime q
-// Choose l bit prime p
-// p-1 % q == 0
-// Choose  1 <= h < p
-// g = (h^(p-1)/q ) % p   , repeat till g != 1
+
 Vec<ZZ> Setup() 
 {
    Vec<ZZ> v ;

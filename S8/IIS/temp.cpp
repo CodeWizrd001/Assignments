@@ -48,9 +48,9 @@ ZZ hexToZZ(char *hex)
 {
    ZZ res = ZZ(0);
    int i;
-   for (i = 2; i < strlen(hex); i += 2)
+   for (i = 0; i < strlen(hex); i += 1)
    {
-      res <<= 8;
+      res <<= 4;
       res += hex[i];
    }
    return res ;

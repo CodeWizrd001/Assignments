@@ -10,39 +10,6 @@ typedef struct Key
     Point publicKey ;
 } Key ;
 
-// Function to calculate Legendre of a with p
-int Legendre(ZZ a,ZZ p)
-{
-    if(a>=p || a<0)
-        return Legendre(a%p,p) ;
-    else if(a==0)
-        return 0 ;
-    else if(a==1)
-        return 1 ;
-    else if(a==2)
-    {
-        if(p%8==1 || p%8==7)
-            return 1 ;
-        else
-            return -1 ;
-    }
-    else if(a==p-1)
-    {
-        if(p%4==1)
-            return 1 ;
-        else
-            return -1 ;
-    }
-    else
-    {
-        if((p-1)%2==0 || (a-1)%2==0)
-            return Legendre(a,p/2) ;
-        else
-            return -Legendre(a,p/2) ;
-    }
-}
-
-
 Key KeyGen(ZZ n,Point B) 
 {
     ZZ PrivateKey = RandomBnd(n) ;

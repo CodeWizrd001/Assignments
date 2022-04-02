@@ -11,39 +11,6 @@ typedef struct Key
    Point publicKey ;
 } Key ;
 
-// Function to calculate Legendre of a with p
-int Legendre(ZZ a,ZZ p)
-{
-   if(a>=p || a<0)
-      return Legendre(a%p,p) ;
-   else if(a==0)
-      return 0 ;
-   else if(a==1)
-      return 1 ;
-   else if(a==2)
-   {
-      if(p%8==1 || p%8==7)
-         return 1 ;
-      else
-         return -1 ;
-   }
-   else if(a==p-1)
-   {
-      if(p%4==1)
-         return 1 ;
-      else
-         return -1 ;
-   }
-   else
-   {
-      if((p-1)%2==0 || (a-1)%2==0)
-         return Legendre(a,p/2) ;
-      else
-         return -Legendre(a,p/2) ;
-   }
-}
-
-
 Key KeyGen(ZZ n,Point B) 
 {
    ZZ PrivateKey = RandomBnd(n) ;
@@ -88,12 +55,19 @@ char *hexdigest(unsigned char *md, int len)
 
 ZZ hexToZZ(char *hex)
 {
+   cout << "hexToZZ  : " << hex << endl ;
    ZZ res = ZZ(0);
    int i;
-   for (i = 2; i < strlen(hex); i += 2)
+   for (i = 0; i < strlen(hex); i += 1)
    {
-      res <<= 8;
-      res += hex[i];
+      res <<= 4;
+      char x = hex[i];
+      if(x>='0' && x <='9')
+         res += hex[i]-48;
+      else if(x>='a' && x <='f')
+         res += hex[i]-87;
+      else if(x>='A' && x <='F')
+         res += hex[i]-55;
    }
    return res ;
 }
@@ -111,9 +85,10 @@ string numberToString(ZZ num)
     return (string) str;
 }
 
-// Some Hash Function
-ZZ Hash(string s)
+// SHA1
+ZZ Hash(ZZ m)
 {
+   string s = numberToString(m);
    unsigned char *str = (unsigned char*)s.c_str();
    unsigned char hash[SHA_DIGEST_LENGTH]; // == 20
    SHA1(str, sizeof(str) - 1, hash);

@@ -183,6 +183,9 @@ class Point {
             // cout << "[+] Check 3" << endl ;
             ZZ t = x - fx ;
             ZZ fy = (l*t - y) % p ;
+            // cout << "Fx : " << fx << endl ;
+            // cout << "Fy : " << fy << endl ;
+
             return Point(fx,fy,p,a,b) ;
         }
 
