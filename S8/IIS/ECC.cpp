@@ -1,5 +1,4 @@
 // Implementation of ECC algorithm using 192 Bit Primary Field
-// Point Arithmetics and supporting functions are stored in ECC.h
 
 #include <string.h>
 #include <NTL/ZZ.h>
