@@ -18,7 +18,7 @@ for match in matches:
     print(f'[+] Replacing File: {fName}')
     text = text.replace(match, open(fName, 'r').read())
 
-outputFilename = "output.md"
+outputFilename = "B180341CS_AJAY_Assig2.md"
 out = open(outputFilename, 'w')
 out.write(text)
 out.close()
