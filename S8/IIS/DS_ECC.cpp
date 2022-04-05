@@ -130,10 +130,8 @@ class Point {
             }
             l = MulMod(ZZ(3) * power(x,2) + a,t_y,p) ;
 
-            // cout << "[+] Check 2" << endl ;
             ZZ fx = (power(l,2)-x-x) % p ;
             
-            // cout << "[+] Check 3" << endl ;
             ZZ t = x - fx ;
             ZZ fy = (l*t - y) % p ;
             
@@ -158,7 +156,6 @@ class Point {
             if(y == 0 && x == 0)
                 return Point(obj.x,obj.y,obj.p,obj.a,obj.b) ;
             
-            // cout << "[+] Check 1" << endl ;
             ZZ l ;
             if(Eq(obj))
             {
@@ -184,14 +181,9 @@ class Point {
                 }
                 l = MulMod(y_,t_x,p) ;
             }
-            // cout << "L  : " << l << endl ;
-            // cout << "[+] Check 2" << endl ;
             ZZ fx = (power(l,2)-x-obj.x) % p ;
-            // cout << "[+] Check 3" << endl ;
             ZZ t = x - fx ;
             ZZ fy = (l*t - y) % p ;
-            // cout << "Fx : " << fx << endl ;
-            // cout << "Fy : " << fy << endl ;
 
             return Point(fx,fy,p,a,b) ;
         }
@@ -218,7 +210,6 @@ class Point {
                 bitset<8> x(p[i]) ;         // x = binary representation of p[i]
                 for(int j=0;j<8;j+=1)
                 {
-                    // cout << x[j] << " : " << endl ;
                     if(x[j] == 1)
                         ans = ans + P ;
                     P = P.Double() ;
@@ -436,6 +427,7 @@ int main()
    cout << "--------------------------------------------------------" << endl ;
 
    Vec<ZZ> sign = Sign(Pm,bobKey.privateKey,k,n,BasePoint) ;
+   cout << "Pass 1 : " << endl ;
    cout << "Signature : " << endl ;
    cout << "r    : " << sign[0] << endl ;
    cout << "s    : " << sign[1] << endl ;
@@ -444,6 +436,7 @@ int main()
    cout << "--------------------------------------------------------" << endl ;
 
    sign[0] = sign[0] + 1234 ;
+   cout << "Pass 2 - [With Tampering] " << endl ;
    cout << "Signature : " << endl ;
    cout << "r    : " << sign[0] << endl ;
    cout << "s    : " << sign[1] << endl ;
