@@ -1,3 +1,6 @@
+// Implementation of Digital Signature using RSA
+// Hash related functions are stored in crypto.h
+
 #include <NTL/ZZ.h>
 #include "crypto.h"
 

@@ -1,5 +1,7 @@
+// Implementation of Digital Signature using ElGamal algorithm
+// Hash related functions are stored in crypto.h
+
 #include <NTL/ZZ.h>
-#include <openssl/sha.h>
 
 #include "crypto.h"
 

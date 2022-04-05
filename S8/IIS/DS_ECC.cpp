@@ -1,3 +1,7 @@
+// Implementation of Digital Signature using ECC 
+// Point Arithmetics and supporting functions are stored in ECC.h
+// Hash related functions are stored in crypto.h
+
 #include "ECC.h"
 #include "crypto.h"
 
