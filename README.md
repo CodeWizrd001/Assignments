@@ -32,3 +32,5 @@
 >
 > [Intro to Information Security](S8/IIS)
 >
+> [Cloud Computing](S8/Cloud)
+>

@@ -1,0 +1,11 @@
+[Unit]
+Description="Simple Server Service"
+
+[Service]
+User=root
+WorkingDirectory=/home/wzard/Server
+ExecStart=/usr/bin/python3 temp.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
