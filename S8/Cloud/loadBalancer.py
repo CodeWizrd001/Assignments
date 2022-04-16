@@ -44,6 +44,8 @@ except libvirt.libvirtError:
 
 print(f'[+] Running Initial Preps')
 for d in connection.listAllDomains() :
+    if d.name() == TEMPLATE_VM :
+        continue
     domains[d.name()] = d
     try :
         d.shutdown()
@@ -116,7 +118,7 @@ def handle_connected(connection=None,address=""):
 
 def getServer() :
     d = getLowLoadDomain()
-    return activeDomains[d][0]
+    return activeServers[d][0]
 
 def handle_request(connection=None,address="") :
     req = connection.recv(BUFFER_SIZE)
@@ -145,7 +147,7 @@ def systemMonitor() :
         time.sleep(1)
         for domName in activeDomains :
             if domName == TEMPLATE_VM :
-                pass
+                continue
             dom = connection.lookupByName(domName)
             pStats = dom.getCPUStats(True)[0]
             time.sleep(poolTime)
@@ -163,7 +165,9 @@ def systemMonitor() :
             }
         flag = len(stats) != 0 
         for domName in stats :
-            print(f'[+] Domain : {domName}   ::: CPU : {stats[domName]["cpu"]:6.2f} %   ::: Sustained : {stats[domName]["sLoad"]:6.2f}')
+            # print(f'[+] Domain : {domName:25s}   ::: CPU : {stats[domName]["cpu"]:6.2f} %   ::: Sustained : {stats[domName]["sLoad"]:6.2f}')
+            pass
+        for domName in stats :
             if stats[domName]['sLoad'] < CPU_THRESHOLD :
                 flag = False
                 break
