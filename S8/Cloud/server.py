@@ -19,7 +19,7 @@ server.listen(5)
 print(f'[+] Listening to connections on : 0.0.0.0:{SERVER_PORT}')
 
 def handle_connected(conn=None,addr="") :
-    data = int(conn.recv(BUFFER_SIZE).decode())
+    data = float(conn.recv(BUFFER_SIZE).decode())
     endTime = time.time() + data
     while time.time() < endTime :
         x = 2*2

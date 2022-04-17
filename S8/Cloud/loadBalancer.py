@@ -20,9 +20,10 @@ TEMPLATE_VM = "Lubuntu_1"
 MAIN_SERVER_DOMAIN = "Lubuntu_1-clone"
 NEXT_VM = "Lubuntu_1-clone1"
 
-CLONE_COMMAND = f"virt-clone --original {TEMPLATE_VM} --auto-clone"
+CLONE_COMMAND = f"sudo virt-clone --original Lubuntu_1 --auto-clone"
 
 CLONE_LOCK = False
+START_LOCK = False
 
 
 # In Seconds
@@ -48,11 +49,14 @@ for d in connection.listAllDomains() :
         continue
     domains[d.name()] = d
     try :
-        d.shutdown()
-        while d.isActive() :
-            time.sleep(0.5)
+        if d.isActive() :
+            d.shutdown()
+            while d.isActive() :
+                time.sleep(0.5)
+        else :
+            continue
     except Exception as e :
-        print(f'[!] Exception : {e}')
+        print(f'[!] SetupException : {e}')
 
 try :
     domains[MAIN_SERVER_DOMAIN].create()
@@ -65,11 +69,27 @@ print(f'[+] Initial Preps Done')
 
 def acquireCloneLock() :
     global CLONE_LOCK
-    return not CLONE_LOCK
+    if CLONE_LOCK :
+        return False
+    else :
+        CLONE_LOCK = True
+        return True
 
 def releaseCloneLock() :
     global CLONE_LOCK
     CLONE_LOCK = False
+
+def acquireStartLock() :
+    global START_LOCK
+    if START_LOCK :
+        return False
+    else :
+        START_LOCK = True
+        return True
+
+def releaseStartLock() :
+    global START_LOCK
+    START_LOCK = False
 
 def addServer(ip) :
     for domName in domains :
@@ -81,17 +101,26 @@ def addServer(ip) :
 def cloneServer() :
     global NEXT_VM
     next_vm = NEXT_VM.replace(MAIN_SERVER_DOMAIN,'')
-    next_vm = str(int(next)+1)
+    next_vm = str(int(next_vm)+1)
     next_vm = MAIN_SERVER_DOMAIN + next_vm
     try :
         connection.lookupByName(next_vm)
         print(f'[+] Cloning Not Needed VM Already Exists')
+        NEXT_VM = next_vm
     except Exception as e :
         if acquireCloneLock() : 
             print(f'[*] Cloning in process')
-            os.system(CLONE_COMMAND)
+
+            print(f'[-] Live Cloning Disabled')
+            # os.system(CLONE_COMMAND)
             releaseCloneLock()
-            print(f'[+] Cloning Complete')
+            try :
+                d = connection.lookupByName(next_vm)
+                print(f'[+] Cloning Complete')
+                d.create()
+                d.shutdown()
+            except :
+                print(f'[-] Cloning Failed')
             for d in connection.listAllDomains() :
                 if d.name() not in domains :
                     NEXT_VM = d.name()
@@ -100,15 +129,26 @@ def cloneServer() :
             print(f'[!] CloneError : Cloning Already in Progress')
 
 def startNext() :
-    dom = connection.lookupByName(NEXT_VM)
     try :
+        dom = connection.lookupByName(NEXT_VM)
+    except Exception as e :
+        print(f'[+] Next VM Does Not Exist')
+    if acquireStartLock() :
+        pass
+    else :
+        print(f'[+] Start Already in Progress')
+        return
+    try :
+        print(f'[+] Starting VM : {NEXT_VM}')
         dom.create()
+        time.sleep(10)
+        releaseStartLock()
         cloneServer()
     except Exception as e : 
-        print(f'[!] StartNextException : {e}')
+        print(f'[!] StartNextException : {NEXT_VM} {e}')
     
 def handle_connected(connection=None,address=""):
-    print(f'[+] Received Connection from {address}')
+    print(f'[+] Received New Server from {address}')
     data = connection.recv(BUFFER_SIZE)
     data = data.decode()
     if "RegNewServer" == data :
@@ -118,13 +158,15 @@ def handle_connected(connection=None,address=""):
 
 def getServer() :
     d = getLowLoadDomain()
-    return activeServers[d][0]
+    return d , activeServers[d][0]
 
 def handle_request(connection=None,address="") :
+    # print(f'[+] Received Request from : {address}')
     req = connection.recv(BUFFER_SIZE)
     c = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    s = getServer()
+    d , s = getServer()
     addr = (s,SRV_HOST_PORT)
+    print(f'[+] Sending Request to : {s:16s} : {d:20s}')
     c.connect(addr)
     c.send(req)
     res = c.recv(BUFFER_SIZE)
@@ -134,8 +176,10 @@ def getLowLoadDomain() :
     l = stats[MAIN_SERVER_DOMAIN]['sLoad']
     lDom = MAIN_SERVER_DOMAIN
 
+    # print(f'[+] Choosing Server : {stats}')
     for domName in stats :
         if stats[domName]['sLoad'] < l :
+            # print(f'[----] Moving to server with load : {l} ::: domName : {domName}')
             l = stats[domName]['sLoad']
             lDom = domName
     return lDom
@@ -165,7 +209,7 @@ def systemMonitor() :
             }
         flag = len(stats) != 0 
         for domName in stats :
-            # print(f'[+] Domain : {domName:25s}   ::: CPU : {stats[domName]["cpu"]:6.2f} %   ::: Sustained : {stats[domName]["sLoad"]:6.2f}')
+            print(f'[+] Domain : {domName:25s}   ::: CPU : {stats[domName]["cpu"]:6.2f} %   ::: Sustained : {stats[domName]["sLoad"]:6.2f}')
             pass
         for domName in stats :
             if stats[domName]['sLoad'] < CPU_THRESHOLD :
@@ -189,8 +233,8 @@ def srvHandle() :
     mainServer.listen(5)
     print(f"[+] Main Server Listening on : 0.0.0.0:{SRV_HOST_PORT}")
     while RUNNING :
-        connection , client_address = vmServer.accept()
-        connectionThread = Thread(target=handle_connected,args=(connection,client_address,))
+        connection , client_address = mainServer.accept()
+        connectionThread = Thread(target=handle_request,args=(connection,client_address,))
         connectionThread.start()
 
 if __name__ == "__main__" :
@@ -202,13 +246,19 @@ if __name__ == "__main__" :
     srvThread.start()
     monitorThread.start()
 
-    while True :
-        inp = input()
-        if inp == "exit" :
-            print(f'[+] Exiting')
-            print(f'[+] Ctrl+C to stop running threads')
-            RUNNING = False
-            exit(0)
-            vmThread.join()
-            srvThread.join()
-            monitorThread.join()
+    try :
+        while True :
+            inp = input()
+            if inp == "exit" :
+                print(f'[+] Exiting')
+                print(f'[+] Ctrl+C to stop running threads')
+                RUNNING = False
+                vmThread.join()
+                srvThread.join()
+                monitorThread.join()
+                exit(0)
+    except KeyboardInterrupt as e :
+        vmThread.join()
+        srvThread.join()
+        monitorThread.join()
+        exit(0)
