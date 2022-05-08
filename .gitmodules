@@ -1,0 +1,3 @@
+[submodule "S8/NetworksLab"]
+	path = S8/NetworksLab
+	url = git@github.com:anandubajith/networkslab.git
