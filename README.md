@@ -34,3 +34,4 @@
 >
 > [Cloud Computing](S8/Cloud)
 >
+>[Networks Lab](S8/NetworksLab)
